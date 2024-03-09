@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<linkableTargets xmlns="http://www.ibm.com/xmlns/prod/cics/link" xmlns:ns2="http://www.ibm.com/xmlns/prod/CICS/smw2int">
+    <linkableTargetMetadata className="og.cics.hello.HelloJava">
+        <method name="execute"/>
+        <bean name="LinkBean_dee80f54fb9848fb958c3bef08302e3b" proxy="true" targetType="POJO"/>
+        <ns2:cicsdefinitionprogram name="OGHWJ3"/>
+    </linkableTargetMetadata>
+</linkableTargets>

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hello
+Bundle-SymbolicName: og.cics.hello.osgi
+Bundle-Version: 1.0.0.0
+Automatic-Module-Name: og.cics.hello.osgi
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: com.ibm.cics.jcicsx;version="1.0.0",
+ com.ibm.cics.server;version="2.0.0",
+ com.ibm.cics.server.invocation;version="1.500.0"
