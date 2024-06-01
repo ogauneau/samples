@@ -23,3 +23,6 @@ JCL IMS4C2J.jcl
 - declare the PSB in IMS and starts it
 - run the COBOL program in a BMP region
 (it actually does more than exporting to the System.out console as it can also export the IVP database IVPDB1 to my GSAM database).
+
+![flow diagram](https://github.com/ogauneau/samples/blob/main/ims-to-java/flow1.png)
+
