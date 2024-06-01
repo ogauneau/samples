@@ -1,0 +1,10 @@
+**********************************************************************
+* Specify the location of Java Virtual Machine (JVM) installation.
+**********************************************************************
+LIBPATH=>
+/usr/lpp/java/J11.0_64/bin/j9vm:>
+/usr/lpp/java/J11.0_64/bin/:>
+/usr/lpp/java/J11.0_64/lib/j9vm/:>
+/usr/lpp/java/J11.0_64/lib/:>
+/usr/lpp/ims/ims15/imsjava/lib
+*

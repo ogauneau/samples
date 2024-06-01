@@ -1,35 +1,42 @@
-//***********************************************************
-//* start a JBP region with 64 bit Java 8 by default unless
+//******************************************************************
+//*  IMSBATCH Procedure with a J8 64 bit JVM by default unless
 //*  ENVIRON parameter overrides it
 //*
-//***********************************************************
-//       PROC MBR=TEMPNAME,PSB=,OUT=,
+//*  This procedure executes an IMS online batch message
+//*  processing address space.
+//*
+//***********************************************************@SCPYRT**
+//*
+//*  Licensed Materials - Property of IBM
+//*
+//*  5635-A06
+//*
+//*      Copyright IBM Corp. 2016,2021 All Rights Reserved
+//*
+//*  US Government Users Restricted Rights - Use, duplication or
+//*  disclosure restricted by GSA ADP Schedule contract with
+//*  IBM Corp.
+//*
+//***********************************************************@ECPYRT**
+//*
+//       PROC MBR=TEMPNAME,PSB=,IN=,OUT=,
 //            OPT=N,SPIE=0,TEST=0,DIRCA=000,
-//            STIMER=,CKPTID=,PARDLI=,
+//            PRLD=,STIMER=,CKPTID=,PARDLI=,
 //            CPUTIME=,NBA=,OBA=,IMSID=,AGN=,
-//            PREINIT=,RGN=56K,SOUT=A,
-//            SYS2=,ALTID=,APARM=,
-//            LOCKMAX=,
-//            PRLD=,SSM=,
-//* Java 8
-//            JVM=3164,
-//            ENVIRON=DFSJEV64,
-//*-Djava.class.path=/usr/lpp/ims/ims15/imsjava/imsudb.jar:
-//*/usr/lpp/ims/ims15/imsjava/imsutm.jar:
-//*/usr/lpp/ims/ims15/imsjava/samples/OpenDBIVP.jar
-//            JVMOPMAS=DFSJVMMS,
+//            SSM=,PREINIT=,RGN=52K,SOUT=A,
+//            SYS2=,ALTID=,APARM=,LOCKMAX=,
+//            ENVIRON=,JVMOPMAS=,JVM=3164,
+//            NODE1=IMS,
+//            NODE2=IMS
 //*
-//            NODE1=DFS.V15RXM0,
-//            NODE2=IMS1510.IF1A
-//*
-//JBPRGN EXEC PGM=DFSRRC00,REGION=&RGN,
-//            PARM=(JBP,&MBR,&PSB,&JVMOPMAS,&OUT,
-//            &OPT&SPIE&TEST&DIRCA,
+//G      EXEC PGM=DFSRRC00,REGION=&RGN,
+//            PARM=(BMP,&MBR,&PSB,&IN,&OUT,
+//            &OPT&SPIE&TEST&DIRCA,&PRLD,
 //            &STIMER,&CKPTID,&PARDLI,&CPUTIME,
-//            &NBA,&OBA,&IMSID,&AGN,
+//            &NBA,&OBA,&IMSID,&AGN,&SSM,
 //            &PREINIT,&ALTID,
-//            '&APARM',&ENVIRON,&LOCKMAX,
-//            &PRLD,&SSM,&JVM)
+//            '&APARM',&LOCKMAX,
+//            &ENVIRON,&JVMOPMAS,&JVM)
 //SYSPRINT DD SYSOUT=*
 //*
 //* Add IMS DD to prevent abend 657 with label=C4C90001
@@ -70,3 +77,4 @@
 //* for Java output
 //STDOUT DD SYSOUT=*
 //STDERR DD SYSOUT=*
+//*

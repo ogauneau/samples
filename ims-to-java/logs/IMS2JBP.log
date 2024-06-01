@@ -1,0 +1,333 @@
+                    J E S 2  J O B  L O G  --  S Y S T E M  I P O 1  --  N O D E  V M 3 0 0 6 4
+ 
+13.18.23 JOB01221 ---- SATURDAY,  01 JUN 2024 ----
+13.18.23 JOB01221  IRR010I  USERID GAUNEAU  IS ASSIGNED TO THIS JOB.
+13.18.23 JOB01221  ICH70001I GAUNEAU  LAST ACCESS AT 13:11:30 ON SATURDAY, JUNE 1, 2024
+13.18.23 JOB01221  $HASP373 IMS2JBP  STARTED - INIT G    - CLASS A        - SYS IPO1
+13.18.23 JOB01221  IEF403I IMS2JBP - STARTED - TIME=13.18.23
+13.18.23 JOB01221  -                                      ----TIMINGS (MINUTES)-----                          -----PAGING COUNTS----
+13.18.23 JOB01221  -STEPNAME PROCSTEP    RC   EXCP   CONN       TCB       SRB  CLOCK          SERV  WORKLOAD  PAGE  SWAP   VIO SWAPS
+13.18.23 JOB01221  -IMSSTART             00     32      5  0.000025  0.000000    0.0           139  BATCH        0     0     0     0
+13.18.24 JOB01221  -RUN      JBPRGN      00  15221     87  0.006714  0.000016    0.0         35696  BATCH        0     0     0     0
+13.18.24 JOB01221  IEF404I IMS2JBP - ENDED - TIME=13.18.24
+13.18.24 JOB01221  -IMS2JBP  ENDED.  NAME-                     TOTAL TCB CPU TIME= 0.006739 TOTAL ELAPSED TIME=   0.0 SUBSYS=JES2
+13.18.24 JOB01221  $HASP395 IMS2JBP  ENDED - RC=0000
+------ JES2 JOB STATISTICS ------
+  01 JUN 2024 JOB EXECUTION DATE
+           66 CARDS READ
+          332 SYSOUT PRINT RECORDS
+            0 SYSOUT PUNCH RECORDS
+           24 SYSOUT SPOOL KBYTES
+         0.01 MINUTES EXECUTION TIME
+        1 //IMS2JBP JOB                                                           JOB01221
+          //*************************************************************
+          //*
+          //* Created by Olivier Gauneau
+          //*
+          //* Run my Java sample og.ims.samples.ExportIVPDB.main()
+          //* in an IMS JBP region using IVP PSB DFSIVP67
+          //*
+          //* 1- Start the PSB
+          //* 2- Run the COBOL program and PSB in IMS BMP region
+          //*
+          //* IVPDB2 should be exported to DD STDOUT
+          //*
+          //* Java classes/jar need to be already installed in IMS
+          //* ie -Djava.class.path=/u/gauneau/dev/ims/ogsamples.jar:....
+          //*    in dfsjvmpr.props referenced by OGJVMMS
+          //*
+          //* DFSJVMAP should contain something like
+          //* OGJBP1=og/ims/samples/ExportIVPDB1
+          //* (see run step below)
+          //*
+          //*
+          //******************************************************************
+        2 //PROCS JCLLIB ORDER=(GAUNEAU.CASE.JCL,IMS1510.IF1A.PROCLIB)
+          //*
+        3 // SET IMSNODE1=DFS.V15RXM0
+        4 // SET IMSNODE2=IMS1510.IF1A
+          //*
+          //****************************************************
+          //* Start DFSIVP67 just in case
+          //* (no need to declare it as it is probably there by default)
+          //*****************************************************
+          //*
+        5 //IMSSTART   EXEC PGM=CSLUSPOC,
+          //  PARM=('IMSPLEX=PLEXA')
+        6 //STEPLIB  DD DISP=SHR,DSN=&IMSNODE1..SDFSRESL
+          IEFC653I SUBSTITUTION JCL - DISP=SHR,DSN=DFS.V15RXM0.SDFSRESL
+        7 //SYSPRINT  DD SYSOUT=*
+        8 //SYSIN     DD *
+          //*
+          //****************************************************
+          //* Run Java IVP
+          //*****************************************************
+          //*
+        9 //RUN  EXEC PROC=IMSJBP64,
+          //         MBR=OGJBP1,
+          //         PSB=DFSIVP67,
+          //         NODE1=&IMSNODE1.,
+          //         NODE2=&IMSNODE2.,
+          //         SOUT='*',
+          //         IMSID=IF1A,
+          //         JVMOPMAS=OGJVMMS,
+          //         ENVIRON=DFSJ64EV,
+          //         RGN=0M
+          XX***********************************************************
+          XX* start a JBP region with 64 bit JVM
+          XX*
+          XX***********************************************************
+          IEFC653I SUBSTITUTION JCL - PROC=IMSJBP64,MBR=OGJBP1,PSB=DFSIVP67,NODE1=DFS.V15RXM0,NODE2=IMS1510.IF1A,
+          SOUT='*',IMSID=IF1A,JVMOPMAS=OGJVMMS,ENVIRON=DFSJ64EV,RGN=0M
+       10 XX       PROC MBR=TEMPNAME,PSB=,OUT=,
+          XX            OPT=N,SPIE=0,TEST=0,DIRCA=000,
+          XX            STIMER=,CKPTID=,PARDLI=,
+          XX            CPUTIME=,NBA=,OBA=,IMSID=,AGN=,
+          XX            PREINIT=,RGN=56K,SOUT=A,
+          XX            SYS2=,ALTID=,APARM=,
+          XX            LOCKMAX=,
+          XX            PRLD=,SSM=,
+          XX* Java 8
+          XX            JVM=3164,
+          XX            ENVIRON=DFSJEV64,
+          XX*-Djava.class.path=/usr/lpp/ims/ims15/imsjava/imsudb.jar:
+          XX*/usr/lpp/ims/ims15/imsjava/imsutm.jar:
+          XX*/usr/lpp/ims/ims15/imsjava/samples/OpenDBIVP.jar
+          XX            JVMOPMAS=DFSJVMMS,
+          XX*
+          XX            NODE1=DFS.V15RXM0,
+          XX            NODE2=IMS1510.IF1A
+          XX*
+       11 XXJBPRGN EXEC PGM=DFSRRC00,REGION=&RGN,
+          XX            PARM=(JBP,&MBR,&PSB,&JVMOPMAS,&OUT,
+          XX            &OPT&SPIE&TEST&DIRCA,
+          XX            &STIMER,&CKPTID,&PARDLI,&CPUTIME,
+          XX            &NBA,&OBA,&IMSID,&AGN,
+          XX            &PREINIT,&ALTID,
+          XX            '&APARM',&ENVIRON,&LOCKMAX,
+          XX            &PRLD,&SSM,&JVM)
+          IEFC653I SUBSTITUTION JCL - PGM=DFSRRC00,REGION=0M,PARM=(JBP,OGJBP1,DFSIVP67,OGJVMMS,,N00000,,,,,,,IF1A,,,,'',
+          DFSJ64EV,,,,3164)
+       12 XXSYSPRINT DD SYSOUT=*
+          XX*
+          XX* Add IMS DD to prevent abend 657 with label=C4C90001
+          XX* https://www.ibm.com/docs/en/ims/15.2.0?topic=0700-0657
+       13 XXIMS      DD DISP=SHR,DSN=&NODE2..PSBLIB
+          IEFC653I SUBSTITUTION JCL - DISP=SHR,DSN=IMS1510.IF1A.PSBLIB
+       14 XX         DD DISP=SHR,DSN=&NODE2..DBDLIB
+          XX*                                  00430000
+          IEFC653I SUBSTITUTION JCL - DISP=SHR,DSN=IMS1510.IF1A.DBDLIB
+       15 XXSTEPLIB  DD DSN=&NODE2..SDFSRESL,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=IMS1510.IF1A.SDFSRESL,DISP=SHR
+       16 XX         DD DSN=&NODE2..PGMLIB,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=IMS1510.IF1A.PGMLIB,DISP=SHR
+       17 XX         DD DSN=&NODE1..SDFSRESL,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=DFS.V15RXM0.SDFSRESL,DISP=SHR
+       18 XX         DD DSN=&NODE1..PGMLIB,DISP=SHR
+          XX* for Java lib
+          XX* /usr/lpp/ims/ims15/imsjava/lib/libT2DLI.so -> DFSCLIBU
+          IEFC653I SUBSTITUTION JCL - DSN=DFS.V15RXM0.PGMLIB,DISP=SHR
+       19 XX         DD DSN=&NODE1..SDFSJLIB,DISP=SHR
+          XX* for application programs
+          IEFC653I SUBSTITUTION JCL - DSN=DFS.V15RXM0.SDFSJLIB,DISP=SHR
+       20 XX         DD DSN=BUILDER.TEST.PDSE.LOAD,DISP=SHR
+          XX*
+       21 XXDFSRESLB DD DSN=&NODE2..SDFSRESL,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=IMS1510.IF1A.SDFSRESL,DISP=SHR
+       22 XX         DD DSN=&NODE1..SDFSRESL,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=DFS.V15RXM0.SDFSRESL,DISP=SHR
+       23 XXIEFRDER  DD DSN=BUILDER.IMSLOG,DISP=(,DELETE),
+          XX         SPACE=(TRK,(20,20),RLSE),
+          XX*        VOL=(,,,99),
+          XX            UNIT=SYSALLDA,
+          XX         DCB=(RECFM=VB,BLKSIZE=4096,
+          XX         LRECL=4092,BUFNO=2)
+          XX*
+          XX* ADDITIONAL DD STATEMENTS
+          XX*
+       24 XXIEFRDER2 DD DUMMY,
+          XX            UNIT=SYSALLDA,
+          XX            DCB=BLKSIZE=6144
+          XX*
+       25 //JBPRGN.PROCLIB  DD DSN=GAUNEAU.CASE.JCL,DISP=SHR
+          X/PROCLIB  DD DSN=&NODE2..&SYS2.PROCLIB,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=IMS1510.IF1A.PROCLIB,DISP=SHR
+       26 //                DD DSN=&NODE2..&SYS2.PROCLIB,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=IMS1510.IF1A.PROCLIB,DISP=SHR
+       27 XXSYSUDUMP DD SYSOUT=&SOUT,
+          XX         DCB=(LRECL=121,RECFM=VBA,BLKSIZE=3129),
+          XX         SPACE=(125,(2500,100),RLSE,,ROUND)
+          XX*
+          XX* for Java output
+          IEFC653I SUBSTITUTION JCL - SYSOUT=*,DCB=(LRECL=121,RECFM=VBA,BLKSIZE=3129),SPACE=(125,(2500,100),RLSE,,ROUND)
+       28 XXSTDOUT DD SYSOUT=*
+       29 XXSTDERR DD SYSOUT=*
+          //* adding my proclib GAUNEAU.CASE.JCL containing
+          //* DFSJVMAP with my mapping of OGJBP1 to my class in
+          //* OGJVMMS with location of my jar files
+ STMT NO. MESSAGE
+        9 IEFC001I PROCEDURE IMSJBP64 WAS EXPANDED USING PRIVATE LIBRARY IMS1510.IF1A.PROCLIB
+ICH70001I GAUNEAU  LAST ACCESS AT 13:11:30 ON SATURDAY, JUNE 1, 2024
+IEFA111I IMS2JBP IS USING THE FOLLOWING JOB RELATED SETTINGS:
+         SWA=BELOW,TIOT SIZE=32K,DSENQSHR=DISALLOW,GDGBIAS=JOB
+IEF236I ALLOC. FOR IMS2JBP IMSSTART
+IEF237I 04AD ALLOCATED TO STEPLIB
+IEF237I JES2 ALLOCATED TO SYSPRINT
+IEF237I JES2 ALLOCATED TO SYSIN
+IEF142I IMS2JBP IMSSTART - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   DFS.V15RXM0.SDFSRESL                         KEPT
+IEF285I   VOL SER NOS= PP0N6P.
+IEF285I   GAUNEAU.IMS2JBP.JOB01221.D0000102.?          SYSOUT
+IEF285I   GAUNEAU.IMS2JBP.JOB01221.D0000101.?          SYSIN
+IEF373I STEP/IMSSTART/START 2024153.1318
+IEF032I STEP/IMSSTART/STOP  2024153.1318
+        CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:    32K  SYS:   252K  EXT:      208K  SYS:    12500K
+        ATB- REAL:                  1256K  SLOTS:                     0K
+             VIRT- ALLOC:      14M SHRD:       0M
+IEF236I ALLOC. FOR IMS2JBP JBPRGN RUN
+IEF237I JES2 ALLOCATED TO SYSPRINT
+IGD103I SMS ALLOCATED TO DDNAME IMS
+IGD103I SMS ALLOCATED TO DDNAME
+IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+IGD103I SMS ALLOCATED TO DDNAME
+IEF237I 04AD ALLOCATED TO
+IEF237I 04AD ALLOCATED TO
+IEF237I 04AD ALLOCATED TO
+IGD103I SMS ALLOCATED TO DDNAME
+IGD103I SMS ALLOCATED TO DDNAME DFSRESLB
+IEF237I 04AD ALLOCATED TO
+IGD101I SMS ALLOCATED TO DDNAME (IEFRDER )
+        DSN (BUILDER.IMSLOG                              )
+        STORCLAS (CLASS2) MGMTCLAS (        ) DATACLAS (        )
+        VOL SER NOS= V30642
+IEF237I DMY  ALLOCATED TO IEFRDER2
+IGD103I SMS ALLOCATED TO DDNAME PROCLIB
+IGD103I SMS ALLOCATED TO DDNAME
+IEF237I JES2 ALLOCATED TO SYSUDUMP
+IEF237I JES2 ALLOCATED TO STDOUT
+IEF237I JES2 ALLOCATED TO STDERR
+IEF237I JES2 ALLOCATED TO SYS00001
+IEF285I   GAUNEAU.IMS2JBP.JOB01221.D0000107.?          SYSOUT
+IEF142I IMS2JBP JBPRGN RUN - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   GAUNEAU.IMS2JBP.JOB01221.D0000103.?          SYSOUT
+IGD104I IMS1510.IF1A.PSBLIB                          RETAINED,  DDNAME=IMS
+IGD104I IMS1510.IF1A.DBDLIB                          RETAINED,  DDNAME=
+IGD104I IMS1510.IF1A.SDFSRESL                        RETAINED,  DDNAME=STEPLIB
+IGD104I IMS1510.IF1A.PGMLIB                          RETAINED,  DDNAME=
+IEF285I   DFS.V15RXM0.SDFSRESL                         KEPT
+IEF285I   VOL SER NOS= PP0N6P.
+IEF285I   DFS.V15RXM0.PGMLIB                           KEPT
+IEF285I   VOL SER NOS= PP0N6P.
+IEF285I   DFS.V15RXM0.SDFSJLIB                         KEPT
+IEF285I   VOL SER NOS= PP0N6P.
+IGD104I BUILDER.TEST.PDSE.LOAD                       RETAINED,  DDNAME=
+IGD104I IMS1510.IF1A.SDFSRESL                        RETAINED,  DDNAME=DFSRESLB
+IEF285I   DFS.V15RXM0.SDFSRESL                         KEPT
+IEF285I   VOL SER NOS= PP0N6P.
+IGD105I BUILDER.IMSLOG                               DELETED,   DDNAME=IEFRDER
+IGD104I GAUNEAU.CASE.JCL                             RETAINED,  DDNAME=PROCLIB
+IGD104I IMS1510.IF1A.PROCLIB                         RETAINED,  DDNAME=
+IEF285I   GAUNEAU.IMS2JBP.JOB01221.D0000104.?          SYSOUT
+IEF285I   GAUNEAU.IMS2JBP.JOB01221.D0000105.?          SYSOUT
+IEF285I   GAUNEAU.IMS2JBP.JOB01221.D0000106.?          SYSOUT
+IEF373I STEP/JBPRGN  /START 2024153.1318
+IEF032I STEP/JBPRGN  /STOP  2024153.1318
+        CPU:     0 HR  00 MIN  00.40 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   172K  SYS:   316K  EXT:   231380K  SYS:   325880K
+        ATB- REAL:                 34588K  SLOTS:                     0K
+             VIRT- ALLOC:    1850M SHRD:     300M
+IEF375I  JOB/IMS2JBP /START 2024153.1318
+IEF033I  JOB/IMS2JBP /STOP  2024153.1318
+        CPU:     0 HR  00 MIN  00.40 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+ 
+* start PSB
+ UPDATE PGM NAME(DFSIVP67) START(SCHD)
+ 
+* query status
+ QUERY PGM NAME(DFSIVP67) SHOW(ALL)
+ 
+ 
+Log for:  UPDATE PGM NAME(DFSIVP67) START(SCHD)
+ 
+ IMSplex . . . . . : PLEXA
+ Routing . . . . . :
+ Start Time. . . . : 2024.153 13:18:23.84
+ Stop Time . . . . : 2024.153 13:18:23.84
+ Return code . . . : 00000000
+ Reason code . . . : 00000000
+ Reason text . . . :
+ Command master. . : IF1A
+ 
+ 
+    Response for: UPDATE PGM NAME(DFSIVP67) START(SCHD)
+    PgmName  MbrName    CC
+    --------------------------------------------------------------------------------------------------------------------------------
+    DFSIVP67 IF1A        0
+ 
+Log for:  QUERY PGM NAME(DFSIVP67) SHOW(ALL)
+ 
+ IMSplex . . . . . : PLEXA
+ Routing . . . . . :
+ Start Time. . . . : 2024.153 13:18:23.84
+ Stop Time . . . . : 2024.153 13:18:23.84
+ Return code . . . : 00000000
+ Reason code . . . : 00000000
+ Reason text . . . :
+ Command master. . : IF1A
+ 
+ 
+    Response for: QUERY PGM NAME(DFSIVP67) SHOW(ALL)
+    PgmName  MbrName    CC LRgnType LBMPType LFP LDOPT LGPSB LRsdnt LTranStat LPgmLang LSchdType LclStat LModelName LModelType
+             LTimeCreate          LTimeUpdate          LTimeAccess          LTimeImport          LDefnType
+    --------------------------------------------------------------------------------------------------------------------------------
+    DFSIVP67 IF1A        0 JBP      Y        N   N     N     N      N                  SERIAL
+             2024.153 05:26:45.94                      2024.153 13:11:31.21                      MODBLKS
+DFSJVM36: ENVIRON member name is DFSJ64EV
+DFSJVM36: LIBPATH=/usr/lpp/java/J11.0_64/bin/j9vm:/usr/lpp/java/J11.0_64/bin/:/usr/lpp/java/J11.0_64/lib/j9vm/:/usr/lpp/java/J11.0_6
+4/lib/:/usr/lpp/ims/ims15/imsjava/lib
+DFSJVM36: JVMOPMAS member name is OGJVMMS
+DFSJVM36: Option 0 = -Xoptionsfile=/u/gauneau/dev/ims/dfsjvmpr.props
+DFSJVM36: Option 1 = -Dcom.ibm.ims.jdbcenvironment=IMS
+DFSJVM36: Option 2 = -Dcom.ibm.ims.regiontype=JBP
+DFSJVM36: Option 3 = -XX:+Enable3164Interoperability
+DFSJVM36: +++++++++++++++++++++++++++++++++++++++++
+DFSJVM36: ++   Start Contents of -Xoptionsfile   ++
+DFSJVM36: +++++++++++++++++++++++++++++++++++++++++
+DFSJVM36: -Djava.class.path=/u/gauneau/dev/ims/ogsamples.jar:/usr/lpp/ims/ims15/imsjava/imsudb.jar:/usr/lpp/ims/ims15/imsjava/imsutm
+.jar:/usr/lpp/ims/ims15/imsjava/samples/OpenDBIVP.jar
+DFSJVM36: +++++++++++++++++++++++++++++++++++++++++
+DFSJVM36: ++   End Contents of -Xoptionsfile   ++
+DFSJVM36: +++++++++++++++++++++++++++++++++++++++++
+DFSJVM36: JVM initialization started:  Sat Jun  1 17:18:24.116 2024
+DFSJVM36: JVM initialization complete: Sat Jun  1 17:18:24.320 2024
+DFSJVM36: Process ID:::::::: PID =67109116
+DFSJVM36: Parent Process ID: PPID=1
+DFSJVM36: Process Group ID:: PGID=67109116
+nb arg0
+Jun 01, 2024 5:18:24 PM og.ims.samples.ExportIVPDB1 exportAllToConsole
+FINE: INFO prog name=OGJBP1
+Jun 01, 2024 5:18:24 PM og.ims.samples.ExportIVPDB1 exportAllToConsole
+FINE: INFO PSB name=DFSIVP67
+Jun 01, 2024 5:18:24 PM og.ims.ivp.program.DFSIVP67 getPhonebookDB
+FINE: INFO using driver=DLI
+Jun 01, 2024 5:18:24 PM com.ibm.ims.dli.PSBInternalFactory createPSB
+INFO: IMS Universal Drivers build number: 15152
+Jun 01, 2024 5:18:24 PM com.ibm.ims.dli.PSBInternalFactory createPSB
+INFO: IMS Universal Drivers Logger: com.ibm.ims.db.opendb Level: INFO
+Last=LAST6, first=FIRST6, extension=8-111-6666, zipCode=D06/R06
+Last=LAST1, first=FIRST1, extension=8-111-1111, zipCode=D01/R01
+Last=LAST2, first=FIRST2, extension=8-111-2222, zipCode=D02/R02
+Last=LAST3, first=FIRST3, extension=8-111-3333, zipCode=D03/R03
+Last=LAST5, first=FIRST5, extension=8-111-5555, zipCode=D05/R05
+Last=LAST4, first=FIRST4, extension=8-111-4444, zipCode=D04/R04
+Jun 01, 2024 5:18:24 PM og.ims.samples.ExportIVPDB1 exportAllToConsole
+FINE: INFO Exported records, count=6
+Jun 01, 2024 5:18:24 PM com.ibm.ims.dli.tm.ApplicationFactory createApplication
+INFO: IMS JDR resource adapter build number: 15152
+Jun 01, 2024 5:18:24 PM com.ibm.ims.dli.t2.T2DLICall <init>
+INFO: IMS Universal Drivers native library build number: 1.0.2
+Jun 01, 2024 5:18:24 PM com.ibm.ims.dli.PSBInternalFactory createPSB
+INFO: IMS Universal Drivers build number: 15152
+Jun 01, 2024 5:18:24 PM com.ibm.ims.dli.PSBInternalFactory createPSB
+INFO: IMS Universal Drivers Logger: com.ibm.ims.db.opendb Level: INFO
