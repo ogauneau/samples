@@ -1,0 +1,1664 @@
+ 
+08.06.27 JOB17080 ---- WEDNESDAY, 19 FEB 2025 ----
+08.06.27 JOB17080  IRR010I  USERID OLIVIER  IS ASSIGNED TO THIS JOB.
+08.06.28 JOB17080  ICH70001I OLIVIER  LAST ACCESS AT 08:02:20 ON WEDNESDAY, FEBRUARY 19, 2025
+08.06.28 JOB17080  $HASP373 C2J#SAMP STARTED - INIT B    - CLASS A        - SYS SC47
+08.06.28 JOB17080  IEF403I C2J#SAMP - STARTED - TIME=08.06.28 - ASID=0047 - SC47
+08.06.28 JOB17080  Jobname  Procstep Stepname  CPU Time      EXCPs     RC
+08.06.28 JOB17080  C2J#SAMP --None-- MKUSS     00:00:00         84     00
+08.06.28 JOB17080  C2J#SAMP --None-- MKJAVA    00:00:00        110     00
+08.06.32 JOB17080  C2J#SAMP --None-- BLDJAVA   00:00:00     19,360     00
+08.06.32 JOB17080  C2J#SAMP --None-- BLDCOB    00:00:00     17,371     00
+08.06.35 JOB17080  C2J#SAMP --None-- CJBLD     00:00:00        141     00
+08.06.35 JOB17080  C2J#SAMP --None-- LINK      00:00:00        128     00
+08.06.35 JOB17080  C2J#SAMP --None-- GO        00:00:00     15,118     00
+08.06.35 JOB17080  IEF404I C2J#SAMP - ENDED - TIME=08.06.35 - ASID=0047 - SC47
+08.06.35 JOB17080  $HASP395 C2J#SAMP ENDED - RC=0000
+------ JES2 JOB STATISTICS ------
+  19 FEB 2025 JOB EXECUTION DATE
+          241 CARDS READ
+        1,578 SYSOUT PRINT RECORDS
+            0 SYSOUT PUNCH RECORDS
+          112 SYSOUT SPOOL KBYTES
+         0.12 MINUTES EXECUTION TIME
+        1 //C2J#SAMP JOB ,                                                        JOB17080
+          // MSGCLASS=H,REGION=0M
+          //*************************************************************
+          //*
+          //*  JCL to compile, and run
+          //*  an COBOL program (DD CBLSRC) calling a
+          //*  static Java method (DD JAVASRC)
+          //*
+          //*  Java output is written to DD STDOUT
+          //*  COBOL output is written to DD SYSOUT
+          //*
+          //* note:
+          //*
+          //* JCL variables (&VAR.) are substituted in STDENV DD
+          //* so that STDPARM DD is similar to a USS shell script
+          //* and uses env variables ($VAR.)
+          //*************************************************************
+          //*
+        2 //        EXPORT SYMLIST=*
+        3 // SET COBPRFX='IGY'
+        4 //COBPRFX  EXPORT EXPSET=IGY                         GENERATED STATEMENT
+        5 // SET COBPATH='/usr/lpp/IBM/cobol/igyv6r4'
+        6 //COBPATH  EXPORT EXPSET=/usr/lpp/IBM/cobol/igyv6r4  GENERATED STATEMENT
+        7 // SET LIBPRFX='CEE'
+        8 //LIBPRFX  EXPORT EXPSET=CEE                         GENERATED STATEMENT
+        9 // SET JAVAHOME='/usr/lpp/java/J17.0_64'
+       10 //JAVAHOME EXPORT EXPSET=/usr/lpp/java/J17.0_64      GENERATED STATEMENT
+       11 // SET COBPDS='OLIVIER.SRC.COBOL'
+       12 //COBPDS   EXPORT EXPSET=OLIVIER.SRC.COBOL           GENERATED STATEMENT
+       13 // SET LOADLIB='OLIVIER.BUILD.PDSE.LOAD'
+       14 //LOADLIB  EXPORT EXPSET=OLIVIER.BUILD.PDSE.LOAD     GENERATED STATEMENT
+       15 // SET OBJLIB='OLIVIER.BUILD.OBJ'
+       16 //OBJLIB   EXPORT EXPSET=OLIVIER.BUILD.OBJ           GENERATED STATEMENT
+       17 // SET WORKDIR='/u/olivier/tmp/c2j'
+       18 //WORKDIR  EXPORT EXPSET=/u/olivier/tmp/c2j          GENERATED STATEMENT
+          //*
+          //*************************************************************
+          //* Create USS env
+          //*************************************************************
+          //*
+       19 //MKUSS  EXEC PGM=BPXBATCH,COND=(4,LT)
+       20 //STDPARM  DD *,SYMBOLS=EXECSYS
+       21 //STDOUT   DD SYSOUT=*
+       22 //STDERR   DD SYSOUT=*
+       23 //STDENV   DD *,SYMBOLS=JCLONLY
+          //*
+          //*************************************************************
+          //* Create the Java source file
+          //*************************************************************
+          //*
+       24 //MKJAVA EXEC PGM=IKJEFT01,COND=(4,LT)
+       25 //USS        DD PATH='&WORKDIR./src/HelloWorld.java',
+          //             PATHOPTS=(OWRONLY,OCREAT),
+          //             PATHMODE=(SIRWXU,SIRGRP,SIXGRP,SIROTH,SIXOTH)
+          IEFC653I SUBSTITUTION JCL - PATH='/u/olivier/tmp/c2j/src/HelloWorld.java',PATHOPTS=(OWRONLY,OCREAT),
+          PATHMODE=(SIRWXU,SIRGRP,SIXGRP,SIROTH,SIXOTH)
+       26 //SYSTSPRT DD SYSOUT=*
+       27 //SYSTSIN  DD *
+       28 //JAVASRC        DD *
+          //*
+          //*************************************************************
+          //* Build Java file
+          //*************************************************************
+          //*
+       29 //BLDJAVA EXEC PGM=BPXBATSL,COND=(4,LT)
+       30 //STDPARM DD *,SYMBOLS=EXECSYS
+       31 //STDOUT  DD SYSOUT=*
+       32 //STDERR  DD SYSOUT=*
+       33 //STDENV  DD *,SYMBOLS=EXECSYS
+          //*
+          //*************************************************************
+          //* compile COBOL program (see C2J#HELO.lst)
+          //*  and generate Java IOP
+          //*************************************************************
+          //*
+       34 //BLDCOB    EXEC PGM=IGYCRCTL,COND=(4,LT),REGION=0M,
+          //            PARM=('PGMNAME(LONGMIXED)',
+          //         'JAVAIOP(OUTPATH(''&WORKDIR./javaiop''),JAVA64)')
+          IEFC653I SUBSTITUTION JCL - PGM=IGYCRCTL,COND=(4,LT),REGION=0M,PARM=('PGMNAME(LONGMIXED)',
+          'JAVAIOP(OUTPATH(''/u/olivier/tmp/c2j/javaiop''),JAVA64)')
+       35 //STEPLIB  DD DISP=SHR,DSN=&COBPRFX..SIGYCOMP
+          IEFC653I SUBSTITUTION JCL - DISP=SHR,DSN=IGY.SIGYCOMP
+       36 //SYSPRINT DD SYSOUT=*
+       37 //SYSMDECK DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       38 //SYSUT1   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       39 //SYSUT2   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       40 //SYSUT3   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       41 //SYSUT4   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       42 //SYSUT5   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       43 //SYSUT6   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       44 //SYSUT7   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       45 //SYSUT8   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       46 //SYSUT9   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       47 //SYSUT10  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       48 //SYSUT11  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       49 //SYSUT12  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       50 //SYSUT13  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       51 //SYSUT14  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       52 //SYSUT15  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+       53 //SYSXMLSD DD DUMMY
+       54 //COBOL.SYSLIN DD DISP=SHR,
+          //        DSN=&OBJLIB.(C2JHELO)
+          IEFC653I SUBSTITUTION JCL - DISP=SHR,DSN=OLIVIER.BUILD.OBJ(C2JHELO)
+       55 //COBOL.SYSIN DD *
+          //*
+          //*************************************************************
+          //* call CJBuild to
+          //*    - generate COBOL IOP (IGYCJEST and IGYCJIMC)
+          //*    - compile Java and COBOL IOP programs
+          //*    - generate a DLL import file (libc2ja.x)
+          //*    - link it all into BUILDER.TEST.PDSE.LOAD(LIBC2JA)
+          //*************************************************************
+          //*
+       56 //CJBLD  EXEC PGM=BPXBATCH,COND=(4,LT)
+       57 //STDPARM  DD *,SYMBOLS=EXECSYS
+       58 //STDOUT   DD SYSOUT=*
+       59 //STDERR   DD SYSOUT=*
+       60 //STDENV   DD *,SYMBOLS=JCLONLY
+          //*
+          //*************************************************************
+          //* Link them all
+          //* - C2J#HELO.o
+          //* - Java and COBOL IOP programs in LIBC2JA
+          //*************************************************************
+          //*
+       61 //LINK  EXEC PGM=BPXBATCH,COND=(4,LT)
+       62 //STDPARM  DD *,SYMBOLS=EXECSYS
+       63 //STDOUT   DD SYSOUT=*
+       64 //STDERR   DD SYSOUT=*
+       65 //STDENV   DD *,SYMBOLS=JCLONLY
+          //*
+          //*************************************************************
+          //* Run it
+          //*************************************************************
+          //*
+       66 //GO EXEC PGM=C2JHELO,COND=(4,LT)
+       67 //STDENV DD *,SYMBOLS=JCLONLY
+       68 //CEEOPTS DD *
+       69 //STEPLIB DD DSN=&LOADLIB.,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=OLIVIER.BUILD.PDSE.LOAD,DISP=SHR
+       70 // DD DSN=&LIBPRFX..SCEERUN2,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=CEE.SCEERUN2,DISP=SHR
+       71 // DD DSN=&LIBPRFX..SCEERUN,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=CEE.SCEERUN,DISP=SHR
+       72 // DD DSN=&COBPRFX..SIGYCOMP,DISP=SHR
+          IEFC653I SUBSTITUTION JCL - DSN=IGY.SIGYCOMP,DISP=SHR
+       73 //SYSOUT DD SYSOUT=*
+       74 //CEEDUMP DD SYSOUT=*
+       75 //SYSUDUMP DD DUMMY
+          //*
+          //* ZUtil.redirectStandardStreams will point to these for sdtout/stderr
+          //*  Unless you add the -Djzos.merge.sysout=true option above.
+          //*  Using that option, both Java stdout/stderr with go to DD:SYSOUT
+       76 //STDOUT   DD SYSOUT=*
+       77 //STDERR   DD SYSOUT=*
+          //*
+ STMT NO. MESSAGE
+-
+       37 IGD01007I DATA CLASS ASSIGNED =
+       37 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       38 IGD01007I DATA CLASS ASSIGNED =
+       38 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       39 IGD01007I DATA CLASS ASSIGNED =
+       39 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       40 IGD01007I DATA CLASS ASSIGNED =
+       40 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       41 IGD01007I DATA CLASS ASSIGNED =
+       41 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       42 IGD01007I DATA CLASS ASSIGNED =
+       42 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       43 IGD01007I DATA CLASS ASSIGNED =
+       43 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       44 IGD01007I DATA CLASS ASSIGNED =
+       44 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       45 IGD01007I DATA CLASS ASSIGNED =
+       45 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       46 IGD01007I DATA CLASS ASSIGNED =
+       46 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       47 IGD01007I DATA CLASS ASSIGNED =
+       47 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       48 IGD01007I DATA CLASS ASSIGNED =
+       48 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       49 IGD01007I DATA CLASS ASSIGNED =
+       49 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       50 IGD01007I DATA CLASS ASSIGNED =
+       50 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       51 IGD01007I DATA CLASS ASSIGNED =
+       51 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+       52 IGD01007I DATA CLASS ASSIGNED =
+       52 IGD01008I IN SCHG.  &UNIT = SYSALLDA
+ICH70001I OLIVIER  LAST ACCESS AT 08:02:20 ON WEDNESDAY, FEBRUARY 19, 2025
+IEFA111I C2J#SAMP IS USING THE FOLLOWING JOB RELATED SETTINGS:
+         SWA=ABOVE,TIOT SIZE=40K,DSENQSHR=DISALLOW,GDGBIAS=JOB
+IEF236I ALLOC. FOR C2J#SAMP MKUSS
+IEF237I JES2 ALLOCATED TO STDPARM
+IEF237I JES2 ALLOCATED TO STDOUT
+IEF237I JES2 ALLOCATED TO STDERR
+IEF237I JES2 ALLOCATED TO STDENV
+IEF142I C2J#SAMP MKUSS - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000101.?         SYSIN
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000114.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000115.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000102.?         SYSIN
++- Step Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB(C2J#SAMP) Step#  1 (*Noproc*.MKUSS   ) Pgm(BPXBATCH) - Return Code    00 |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:00.03  CPU Time(TCB): 00:00:00.00  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: None         ICSF Count: None      |
+|Service Units: CPU=      210  SRB=        6  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:00.01 Resident for: 00:00:00.01 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-----------------------------------------------------------------------------+
+|Region Requested f/Step=9,192K,   Private Size=(9,192K/1,253M)   Key Used(8) |
+|Virtual Used Maximums:   For User=(  172K/  132K) For System=(  260K/9,416K) |
+|Pvt Paging(I/O):     0 /    0  VIO(I/O/R):     0 /    0 /    0  Stolen:    0 |
+|Common Pagein:     0  LPA Pagein:     0  Data + Hiper space (MB):          0 |
+|Average Working Set (Page Seconds/CPU Time) for this step, this time:  ----  |
+|There were no swap sequences recorded for this step.                         |
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD=      0  Tape=      0  VIO=      0  Other=      0  Without a DD=     84 |
++-----------------------------------------------------------------------------+
+IEF373I STEP/MKUSS   /START 2025050.0806
+IEF032I STEP/MKUSS   /STOP  2025050.0806
+        CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   172K  SYS:   260K  EXT:      132K  SYS:     9416K
+        ATB- REAL:                  1260K  SLOTS:                     0K
+             VIRT- ALLOC:      17M SHRD:       0M
+IEF236I ALLOC. FOR C2J#SAMP MKJAVA
+IGD103I SMS UNIX FILE ALLOCATED TO DDNAME USS
+IEF237I JES2 ALLOCATED TO SYSTSPRT
+IEF237I JES2 ALLOCATED TO SYSTSIN
+IEF237I JES2 ALLOCATED TO JAVASRC
+IEF142I C2J#SAMP MKJAVA - STEP WAS EXECUTED - COND CODE 0000
+IGD104I UNIX FILE WAS RETAINED, DDNAME IS (USS     )
+FILENAME IS (/u/olivier/tmp/c2j/src/HelloWorld.java)
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000116.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000103.?         SYSIN
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000104.?         SYSIN
++- Step Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB(C2J#SAMP) Step#  2 (*Noproc*.MKJAVA  ) Pgm(IKJEFT01) - Return Code    00 |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:00.02  CPU Time(TCB): 00:00:00.00  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: None         ICSF Count: None      |
+|Service Units: CPU=      317  SRB=       12  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:00.01 Resident for: 00:00:00.01 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-----------------------------------------------------------------------------+
+|Region Requested f/Step=9,192K,   Private Size=(9,192K/1,253M)   Key Used(8) |
+|Virtual Used Maximums:   For User=(  172K/  476K) For System=(  332K/9,696K) |
+|Pvt Paging(I/O):     0 /    0  VIO(I/O/R):     0 /    0 /    0  Stolen:    0 |
+|Common Pagein:     0  LPA Pagein:     0  Data + Hiper space (MB):          0 |
+|Average Working Set (Page Seconds/CPU Time) for this step, this time:  ----  |
+|There were no swap sequences recorded for this step.                         |
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD=      0  Tape=      0  VIO=      0  Other=      0  Without a DD=    110 |
++-----------------------------------------------------------------------------+
+IEF373I STEP/MKJAVA  /START 2025050.0806
+IEF032I STEP/MKJAVA  /STOP  2025050.0806
+        CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   172K  SYS:   332K  EXT:      476K  SYS:     9696K
+        ATB- REAL:                  1256K  SLOTS:                     0K
+             VIRT- ALLOC:      14M SHRD:       0M
+IEF236I ALLOC. FOR C2J#SAMP BLDJAVA
+IEF237I JES2 ALLOCATED TO STDPARM
+IEF237I JES2 ALLOCATED TO STDOUT
+IEF237I JES2 ALLOCATED TO STDERR
+IEF237I JES2 ALLOCATED TO STDENV
+IEF142I C2J#SAMP BLDJAVA - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000105.?         SYSIN
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000117.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000118.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000106.?         SYSIN
++- Step Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB(C2J#SAMP) Step#  3 (*Noproc*.BLDJAVA ) Pgm(BPXBATSL) - Return Code    00 |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:03.51  CPU Time(TCB): 00:00:00.05  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: None         ICSF Count: None      |
+|Service Units: CPU=   92,318  SRB=       93  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:03.50 Resident for: 00:00:03.50 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-----------------------------------------------------------------------------+
+|Region Requested f/Step=9,192K,   Private Size=(9,192K/1,253M)   Key Used(8) |
+|Virtual Used Maximums:   For User=(  184K/  259M) For System=(  296K/   15M) |
+|Pvt Paging(I/O):     0 /    0  VIO(I/O/R):     0 /    0 /    0  Stolen:    0 |
+|Common Pagein:     0  LPA Pagein:     0  Data + Hiper space (MB):          0 |
+|Average Working Set (Page Seconds/CPU Time) for this step, this time: 16,780 |
+|There were no swap sequences recorded for this step.                         |
++------------------------ I / O  Statistics Section --------------------------+
+| * JES Sysin/Sysout Datasets, DUMMY, and Unused Datasets are not included. * |
+| DDname   Dev#=    Count (BLKSZ/ConnT)| DDname   Dev#=    Count (BLKSZ/ConnT)|
++--------------------------------------+--------------------------------------+
+| SYS00001 1106=        9 (32720/  0.0)| SYS00004 2353=        4 (  256/  0.0)|
+| SYS00005 1106=        9 (32720/  0.0)|                                      |
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD=     22  Tape=      0  VIO=      0  Other=      0  Without a DD= 19,338 |
++-----------------------------------------------------------------------------+
+IEF373I STEP/BLDJAVA /START 2025050.0806
+IEF032I STEP/BLDJAVA /STOP  2025050.0806
+        CPU:     0 HR  00 MIN  00.95 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   184K  SYS:   296K  EXT:   265772K  SYS:    16380K
+        ATB- REAL:                 67036K  SLOTS:                     0K
+             VIRT- ALLOC:   16815M SHRD:     300M
+IEF236I ALLOC. FOR C2J#SAMP BLDCOB
+IEF237I A16E ALLOCATED TO STEPLIB
+IEF237I JES2 ALLOCATED TO SYSPRINT
+IGD100I A30A ALLOCATED TO DDNAME SYSMDECK DATACLAS (        )
+IGD100I A20B ALLOCATED TO DDNAME SYSUT1   DATACLAS (        )
+IGD100I A13D ALLOCATED TO DDNAME SYSUT2   DATACLAS (        )
+IGD100I A03D ALLOCATED TO DDNAME SYSUT3   DATACLAS (        )
+IGD100I A13D ALLOCATED TO DDNAME SYSUT4   DATACLAS (        )
+IGD100I A03D ALLOCATED TO DDNAME SYSUT5   DATACLAS (        )
+IGD100I A30A ALLOCATED TO DDNAME SYSUT6   DATACLAS (        )
+IGD100I A13D ALLOCATED TO DDNAME SYSUT7   DATACLAS (        )
+IGD100I A20B ALLOCATED TO DDNAME SYSUT8   DATACLAS (        )
+IGD100I A20B ALLOCATED TO DDNAME SYSUT9   DATACLAS (        )
+IGD100I A13D ALLOCATED TO DDNAME SYSUT10  DATACLAS (        )
+IGD100I A03D ALLOCATED TO DDNAME SYSUT11  DATACLAS (        )
+IGD100I A13D ALLOCATED TO DDNAME SYSUT12  DATACLAS (        )
+IGD100I A20B ALLOCATED TO DDNAME SYSUT13  DATACLAS (        )
+IGD100I A20B ALLOCATED TO DDNAME SYSUT14  DATACLAS (        )
+IGD100I A30A ALLOCATED TO DDNAME SYSUT15  DATACLAS (        )
+IEF237I DMY  ALLOCATED TO SYSXMLSD
+IEF237I A20F ALLOCATED TO SYSLIN
+IEF237I JES2 ALLOCATED TO SYSIN
+IEF142I C2J#SAMP BLDCOB - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   IGY.SIGYCOMP                                 KEPT
+IEF285I   VOL SER NOS= Z31RA1.
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000119.?         SYSOUT
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154545     DELETED
+IEF285I   VOL SER NOS= TOTPB0.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154546     DELETED
+IEF285I   VOL SER NOS= TOTPB3.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154547     DELETED
+IEF285I   VOL SER NOS= TOTPB2.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154548     DELETED
+IEF285I   VOL SER NOS= TOTPB1.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154549     DELETED
+IEF285I   VOL SER NOS= TOTPB2.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154550     DELETED
+IEF285I   VOL SER NOS= TOTPB1.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154551     DELETED
+IEF285I   VOL SER NOS= TOTPB0.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154552     DELETED
+IEF285I   VOL SER NOS= TOTPB2.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154553     DELETED
+IEF285I   VOL SER NOS= TOTPB3.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154554     DELETED
+IEF285I   VOL SER NOS= TOTPB3.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154555     DELETED
+IEF285I   VOL SER NOS= TOTPB2.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154556     DELETED
+IEF285I   VOL SER NOS= TOTPB1.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154557     DELETED
+IEF285I   VOL SER NOS= TOTPB2.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154558     DELETED
+IEF285I   VOL SER NOS= TOTPB3.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154559     DELETED
+IEF285I   VOL SER NOS= TOTPB3.
+IEF285I   SYS25050.T080628.RA000.C2J#SAMP.R0154560     DELETED
+IEF285I   VOL SER NOS= TOTPB0.
+IEF285I   OLIVIER.BUILD.OBJ                            KEPT
+IEF285I   VOL SER NOS= TSTO18.
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000107.?         SYSIN
++- Step Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB(C2J#SAMP) Step#  4 (*Noproc*.BLDCOB  ) Pgm(IGYCRCTL) - Return Code    00 |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:00.36  CPU Time(TCB): 00:00:00.04  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: 00:00:00.01  ICSF Count: None      |
+|Service Units: CPU=    3,568  SRB=       57  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:00.24 Resident for: 00:00:00.24 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-----------------------------------------------------------------------------+
+|Region Requested f/Step=9,192K,   Private Size=(9,192K/1,253M)   Key Used(8) |
+|Virtual Used Maximums:   For User=(  480K/  137M) For System=(  792K/   11M) |
+|Pvt Paging(I/O):     0 /    0  VIO(I/O/R):     0 /    0 /    0  Stolen:    0 |
+|Common Pagein:     0  LPA Pagein:     0  Data + Hiper space (MB):          0 |
+|Average Working Set (Page Seconds/CPU Time) for this step, this time:    746 |
+|There were no swap sequences recorded for this step.                         |
++------------------------ I / O  Statistics Section --------------------------+
+| * JES Sysin/Sysout Datasets, DUMMY, and Unused Datasets are not included. * |
+| DDname   Dev#=    Count (BLKSZ/ConnT)| DDname   Dev#=    Count (BLKSZ/ConnT)|
++--------------------------------------+--------------------------------------+
+| STEPLIB  216E=   13,396 (32760/  0.0)| SYSMDECK 230A=        1 (27920/  0.1)|
+| SYSUT1   220B=        5 ( 4096/  0.0)| SYSUT2   213D=        3 ( 4096/  0.1)|
+| SYSUT3   203D=        1 ( 4096/  0.1)| SYSUT4   213D=        4 ( 4096/  0.1)|
+| SYSUT5   203D=        3 ( 4096/  0.0)| SYSUT6   230A=        4 ( 4096/  0.0)|
+| SYSUT7   213D=        3 ( 4096/  0.0)| SYSUT8   220B=       26 ( 4096/  0.0)|
+| SYSUT9   220B=       15 ( 4096/  0.0)| SYSUT10  213D=        4 ( 4096/  0.0)|
+| SYSUT11  203D=        4 ( 4096/  0.0)| SYSUT12  213D=        7 ( 4096/  0.1)|
+| SYSUT13  220B=        3 ( 4096/  0.1)| SYSLIN   220F=       31 (32720/  0.0)|
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD= 13,510  Tape=      0  VIO=      0  Other=      0  Without a DD=  3,861 |
++-----------------------------------------------------------------------------+
+IEF373I STEP/BLDCOB  /START 2025050.0806
+IEF032I STEP/BLDCOB  /STOP  2025050.0806
+        CPU:     0 HR  00 MIN  00.04 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   480K  SYS:   792K  EXT:   140912K  SYS:    11924K
+        ATB- REAL:                  6544K  SLOTS:                     0K
+             VIRT- ALLOC:     536M SHRD:       0M
+IEF236I ALLOC. FOR C2J#SAMP CJBLD
+IEF237I JES2 ALLOCATED TO STDPARM
+IEF237I JES2 ALLOCATED TO STDOUT
+IEF237I JES2 ALLOCATED TO STDERR
+IEF237I JES2 ALLOCATED TO STDENV
+IEF142I C2J#SAMP CJBLD - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000108.?         SYSIN
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000120.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000121.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000109.?         SYSIN
++- Step Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB(C2J#SAMP) Step#  5 (*Noproc*.CJBLD   ) Pgm(BPXBATCH) - Return Code    00 |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:02.84  CPU Time(TCB): 00:00:00.00  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: None         ICSF Count: None      |
+|Service Units: CPU=      378  SRB=       16  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:02.83 Resident for: 00:00:02.83 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-----------------------------------------------------------------------------+
+|Region Requested f/Step=9,192K,   Private Size=(9,192K/1,253M)   Key Used(8) |
+|Virtual Used Maximums:   For User=(  172K/  132K) For System=(  264K/9,852K) |
+|Pvt Paging(I/O):     0 /    0  VIO(I/O/R):     0 /    0 /    0  Stolen:    0 |
+|Common Pagein:     0  LPA Pagein:     0  Data + Hiper space (MB):          0 |
+|Average Working Set (Page Seconds/CPU Time) for this step, this time:  ----  |
+|There were no swap sequences recorded for this step.                         |
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD=      0  Tape=      0  VIO=      0  Other=      0  Without a DD=    141 |
++-----------------------------------------------------------------------------+
+IEF373I STEP/CJBLD   /START 2025050.0806
+IEF032I STEP/CJBLD   /STOP  2025050.0806
+        CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   172K  SYS:   264K  EXT:      132K  SYS:     9852K
+        ATB- REAL:                  1284K  SLOTS:                     0K
+             VIRT- ALLOC:      21M SHRD:       0M
+IEF236I ALLOC. FOR C2J#SAMP LINK
+IEF237I JES2 ALLOCATED TO STDPARM
+IEF237I JES2 ALLOCATED TO STDOUT
+IEF237I JES2 ALLOCATED TO STDERR
+IEF237I JES2 ALLOCATED TO STDENV
+IEF142I C2J#SAMP LINK - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000110.?         SYSIN
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000122.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000123.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000111.?         SYSIN
++- Step Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB(C2J#SAMP) Step#  6 (*Noproc*.LINK    ) Pgm(BPXBATCH) - Return Code    00 |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:00.17  CPU Time(TCB): 00:00:00.00  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: None         ICSF Count: None      |
+|Service Units: CPU=      279  SRB=       13  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:00.16 Resident for: 00:00:00.16 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-----------------------------------------------------------------------------+
+|Region Requested f/Step=9,192K,   Private Size=(9,192K/1,253M)   Key Used(8) |
+|Virtual Used Maximums:   For User=(  172K/  132K) For System=(  264K/9,852K) |
+|Pvt Paging(I/O):     0 /    0  VIO(I/O/R):     0 /    0 /    0  Stolen:    0 |
+|Common Pagein:     0  LPA Pagein:     0  Data + Hiper space (MB):          0 |
+|Average Working Set (Page Seconds/CPU Time) for this step, this time:  ----  |
+|There were no swap sequences recorded for this step.                         |
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD=      0  Tape=      0  VIO=      0  Other=      0  Without a DD=    128 |
++-----------------------------------------------------------------------------+
+IEF373I STEP/LINK    /START 2025050.0806
+IEF032I STEP/LINK    /STOP  2025050.0806
+        CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   172K  SYS:   264K  EXT:      132K  SYS:     9852K
+        ATB- REAL:                  1284K  SLOTS:                     0K
+             VIRT- ALLOC:      21M SHRD:       0M
+IEF236I ALLOC. FOR C2J#SAMP GO
+IEF237I JES2 ALLOCATED TO STDENV
+IEF237I JES2 ALLOCATED TO CEEOPTS
+IEF237I A141 ALLOCATED TO STEPLIB
+IEF237I A16E ALLOCATED TO
+IEF237I A16E ALLOCATED TO
+IEF237I A16E ALLOCATED TO
+IEF237I JES2 ALLOCATED TO SYSOUT
+IEF237I JES2 ALLOCATED TO CEEDUMP
+IEF237I DMY  ALLOCATED TO SYSUDUMP
+IEF237I JES2 ALLOCATED TO STDOUT
+IEF237I JES2 ALLOCATED TO STDERR
+IEF237I JES2 ALLOCATED TO SYS00006
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000128.?         SYSOUT
+IEF142I C2J#SAMP GO - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000112.?         SYSIN
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000113.?         SYSIN
+IEF285I   OLIVIER.BUILD.PDSE.LOAD                      KEPT
+IEF285I   VOL SER NOS= TSTO17.
+IEF285I   CEE.SCEERUN2                                 KEPT
+IEF285I   VOL SER NOS= Z31RA1.
+IEF285I   CEE.SCEERUN                                  KEPT
+IEF285I   VOL SER NOS= Z31RA1.
+IEF285I   IGY.SIGYCOMP                                 KEPT
+IEF285I   VOL SER NOS= Z31RA1.
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000124.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000125.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000126.?         SYSOUT
+IEF285I   OLIVIER.C2J#SAMP.JOB17080.D0000127.?         SYSOUT
++- Step Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB(C2J#SAMP) Step#  7 (*Noproc*.GO      ) Pgm(C2JHELO ) - Return Code    00 |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:00.56  CPU Time(TCB): 00:00:00.05  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: None         ICSF Count: None      |
+|Service Units: CPU=   21,786  SRB=      262  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:00.54 Resident for: 00:00:00.54 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-----------------------------------------------------------------------------+
+|Region Requested f/Step=9,192K,   Private Size=(9,192K/1,253M)   Key Used(8) |
+|Virtual Used Maximums:   For User=(  100K/  272M) For System=(  284K/   15M) |
+|Pvt Paging(I/O):     0 /    0  VIO(I/O/R):     0 /    0 /    0  Stolen:    0 |
+|Common Pagein:     0  LPA Pagein:     0  Data + Hiper space (MB):          0 |
+|Average Working Set (Page Seconds/CPU Time) for this step, this time:  3,793 |
+|There were no swap sequences recorded for this step.                         |
++------------------------ I / O  Statistics Section --------------------------+
+| * JES Sysin/Sysout Datasets, DUMMY, and Unused Datasets are not included. * |
+| DDname   Dev#=    Count (BLKSZ/ConnT)| DDname   Dev#=    Count (BLKSZ/ConnT)|
++--------------------------------------+--------------------------------------+
+| STEPLIB  2141=       45 ( 4096/  0.0)| (-SAME-) 216E=    2,260 ( 4096/  0.0)|
+| SYS00007 1106=        9 (32720/  0.0)| SYS00010 2353=        4 (  256/  0.0)|
+| SYS00011 1106=        9 (32720/  0.0)|                                      |
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD=  2,327  Tape=      0  VIO=      0  Other=      0  Without a DD= 12,791 |
++-----------------------------------------------------------------------------+
+IEF373I STEP/GO      /START 2025050.0806
+IEF032I STEP/GO      /STOP  2025050.0806
+        CPU:     0 HR  00 MIN  00.22 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+        VIRT:   100K  SYS:   284K  EXT:   278528K  SYS:    15620K
+        ATB- REAL:                 40596K  SLOTS:                     0K
+             VIRT- ALLOC:   16780M SHRD:     300M
++- Job  Statistics - WSCACTRT 3.4 ---------------------------------- HBB77E0 -+
+|JOB C2J#SAMP(JOB17080) ended: Steps(  7) Class(A) Userid(        )           |
++-----------------------------------------------------------------------------+
+|Elapsed Time: 00:00:07.49  CPU Time(TCB): 00:00:00.14  (SRB): 00:00:00.00    |
+|RCT CPU Time: None         I/O Int. Time: 00:00:00.01  ICSF Count: None      |
+|Service Units: CPU=  118,856  SRB=      459  I/O=        0  MSO=        0    |
+|Transactions: ended:None   Active for: 00:00:07.32 Resident for: 00:00:07.32 |
+|WLM: Workload: BATCH    Service Class:BATCHLOW  Resource Group: None         |
++-------------------------- I / O  ACTIVITY  TOTALS --------------------------+
+|DASD= 15,859  Tape=      0  VIO=      0  Other=      0  Without a DD= 36,453 |
++-----------------------------------------------------------------------------+
+IEF375I  JOB/C2J#SAMP/START 2025050.0806
+IEF033I  JOB/C2J#SAMP/STOP  2025050.0806
+        CPU:     0 HR  00 MIN  01.21 SEC    SRB:     0 HR  00 MIN  00.00 SEC
+SH echo WORK_DIR=$WORK_DIR;
+rm -rf $WORK_DIR;
+mkdir $WORK_DIR;
+cd $WORK_DIR;
+mkdir src;
+mkdir javaiop;
+mkdir class;
+echo USS env created
+WORK_DIR=&WORKDIR.
+OCOPY INDD(JAVASRC) OUTDD(USS) TEXT CONVERT(YES) PATHOPTS(USE)
+package test;
+ 
+public class HelloWorld {
+ 
+  public static String sayHelloTo(String name) {
+    String message = "Hello "+name+" and welcome to Java!";
+    System.out.println("Java says: "+message);
+    return "All good!";
+  }
+}
+PGM &JAVAHOME/bin/javac
+ -d &WORKDIR./class
+ &WORKDIR./src/HelloWorld.java
+JAVA_HOME=&JAVAHOME
+      *
+      *
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. 'C2JHELO'.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 USER-NAME     PIC X(10) VALUE "Olivier".
+       01 JAVA-MESSAGE  PIC X(50) VALUE SPACE.
+ 
+       PROCEDURE DIVISION.
+       MAINPROGRAM.
+      *
+           DISPLAY 'COBOL started, test1'
+      * redirect Java stdout/stderr to DDs STDOUT/STDERR
+           CALL 'Java.com.ibm.jzos.ZUtil.redirectStandardStreams'
+           ON EXCEPTION
+              DISPLAY "Java Exception occurred in ZUtil"
+              GOBACK
+           END-CALL
+ 
+           CALL 'Java.test.HelloWorld.sayHelloTo' USING USER-NAME
+                RETURNING JAVA-MESSAGE
+           ON EXCEPTION
+              DISPLAY "Java Exception occurred in HelloWorld"
+              GOBACK
+           END-CALL
+           DISPLAY "Java returned:" JAVA-MESSAGE
+           DISPLAY 'COBOL ended'
+           GOBACK.
+SH echo WORK_DIR=$WORK_DIR;
+export PATH=$PATH:$COBPATH:$JAVA_HOME/bin;
+echo $PATH;
+cd $WORK_DIR/javaiop;
+cjbuild -v -p com.ibm.zdevops
+  -m MIX_31_64
+  -c $WORK_DIR/javaiop
+  -d "//'$LOADLIB'"
+  -s $WORK_DIR/src -j $WORK_DIR/class c2jb1;
+WORK_DIR=&WORKDIR.
+LOADLIB=&LOADLIB.
+COBPATH=&COBPATH./bin
+STEPLIB=&COBPRFX..SIGYCOMP
+JAVA_HOME=&JAVAHOME
+SH echo WORK_DIR=$WORK_DIR;
+export PATH=$PATH:$COBPATH:$JAVA_HOME/bin;
+echo $PATH;
+cd $WORK_DIR/javaiop;
+cob2 -v -bLIST,MAP,XREF "//'$OBJLIB(C2JHELO)'"
+ -o "//'$LOADLIB(C2JHELO)'" ./libc2jb1.x;
+ 
+LOADLIB=&LOADLIB.
+OBJLIB=&OBJLIB.
+WORK_DIR=&WORKDIR.
+COBPATH=&COBPATH./bin
+STEPLIB=&COBPRFX..SIGYCOMP
+_CEE_ENVFILE_COMMENT=#
+_CEE_ENVFILE_CONTINUATION=\
+# lib:/usr/lib
+LIBPATH=&JAVAHOME./lib/j9vm\
+:&JAVAHOME./lib/
+PATH=bin:&JAVAHOME./bin
+CLASSPATH=&WORKDIR./class
+COBJVMINITOPTIONS=-XX:+Enable3164Interoperability
+* Be careful when editing: quoted ENVARS wrap at col 72
+ENVAR(_CEE_ENVFILE_S=DD:STDENV)
+POSIX(ON)
+*
+WORK_DIR=/u/olivier/tmp/c2j
+USS env created
+READY
+OCOPY INDD(JAVASRC) OUTDD(USS) TEXT CONVERT(YES) PATHOPTS(USE)
+READY
+END
+PP 5655-EC6 IBM Enterprise COBOL for z/OS  6.4.0 P241211                 Date 02/19/2025  Time 08:06:32   Page     1
+Invocation parameters:
+ PGMNAME(LONGMIXED),JAVAIOP(OUTPATH('/u/olivier/tmp/c2j/javaiop'),JAVA64)
+Options in effect:
+ NOADATA
+   ADV
+   AFP(NOVOLATILE)
+   QUOTE
+   ARCH(10)
+   ARITH(COMPAT)
+ NOAWO
+ NOBLOCK0
+   BUFSIZE(4096)
+ NOCICS
+   CODEPAGE(1140)
+ NOCOMPILE(S)
+   CONDCOMP(NOSKIPSRC)
+ NOCOPYLOC
+ NOCOPYRIGHT
+ NOCURRENCY
+   DATA(31)
+   DBCS
+ NODECK
+ NODEFINE
+ NODIAGTRUNC
+   DISPSIGN(COMPAT)
+ NODLL
+ NODUMP
+ NODYNAM
+ NOEXIT
+ NOEXPORTALL
+ NOFASTSRT
+   FLAG(I,I)
+ NOFLAGSTD
+   HGPR(PRESERVE)
+ NOINITCHECK
+ NOINITIAL
+   INLINE
+   INTDATE(ANSI)
+ NOINVDATA
+   JAVAIOP(OUTPATH('/u/olivier/tmp/c2j/javaiop/'),NOJVMINITOPTIONS,JAVA64)
+   LANGUAGE(EN)
+   LINECOUNT(60)
+ NOLIST
+   LP(32)
+ NOLSACHECK
+ NOMAP
+   MAXPCF(100000)
+ NOMDECK
+ NONAME
+   NSYMBOL(NATIONAL)
+ NONUMBER
+ NONUMCHECK
+   NUMPROC(NOPFD)
+   OBJECT
+ NOOFFSET
+   OPTIMIZE(0)
+   OUTDD(SYSOUT)
+PP 5655-EC6 IBM Enterprise COBOL for z/OS  6.4.0 P241211                 Date 02/19/2025  Time 08:06:32   Page     2
+ NOPARMCHECK
+   PGMNAME(LONGMIXED)
+   QUALIFY(COMPAT)
+   RENT
+   RMODE(AUTO)
+ NORULES
+ NOSERVICE
+   SEQUENCE
+   SMARTBIN
+   SOURCE(DEC)
+   SPACE(1)
+ NOSQL
+   SQLCCSID
+ NOSQLIMS
+ NOSSRANGE
+ NOSTGOPT
+   SUPPRESS
+ NOTERM
+ NOTEST(NODWARF,NOSOURCE,NOSEPARATE)
+ NOTHREAD
+   TRUNC(STD)
+   TUNE(10)
+ NOVBREF
+   VLR(STANDARD)
+   VSAMOPENFS(COMPAT)
+ NOWORD
+   XMLPARSE(XMLSS)
+   XREF(FULL)
+   ZWB
+PP 5655-EC6 IBM Enterprise COBOL for z/OS  6.4.0 P241211       C2JHELO   Date 02/19/2025  Time 08:06:32   Page     3
+  LineID  PL SL  ----+-*A-1-B--+----2----+----3----+----4----+----5----+----6----+----7-|--+----8 Map and Cross Reference
+  000001               *
+  000002               *
+  000003                IDENTIFICATION DIVISION.
+  000004                PROGRAM-ID. 'C2JHELO'.
+  000005                DATA DIVISION.
+  000006                WORKING-STORAGE SECTION.
+  000007                01 USER-NAME     PIC X(10) VALUE "Olivier".
+  000008                01 JAVA-MESSAGE  PIC X(50) VALUE SPACE.                                   IMP
+  000009
+  000010                PROCEDURE DIVISION.
+  000011                MAINPROGRAM.
+  000012               *
+  000013                    DISPLAY 'COBOL started, test1'
+  000014               * redirect Java stdout/stderr to DDs STDOUT/STDERR
+  000015                    CALL 'Java.com.ibm.jzos.ZUtil.redirectStandardStreams'                EXT
+  000016                    ON EXCEPTION
+  000017      1                DISPLAY "Java Exception occurred in ZUtil"
+  000018      1                GOBACK
+  000019                    END-CALL
+  000020
+  000021                    CALL 'Java.test.HelloWorld.sayHelloTo' USING USER-NAME                EXT 7
+  000022                         RETURNING JAVA-MESSAGE                                           8
+  000023                    ON EXCEPTION
+  000024      1                DISPLAY "Java Exception occurred in HelloWorld"
+  000025      1                GOBACK
+  000026                    END-CALL
+  000027                    DISPLAY "Java returned:" JAVA-MESSAGE                                 8
+  000028                    DISPLAY 'COBOL ended'
+  000029                    GOBACK.
+PP 5655-EC6 IBM Enterprise COBOL for z/OS  6.4.0 P241211       C2JHELO   Date 02/19/2025  Time 08:06:32   Page     4
+An "M" preceding a data-name reference indicates that the data-name is modified by this reference.
+ 
+ Defined   Cross-reference of data names   References
+ 
+       8   JAVA-MESSAGE . . . . . . . . .  22 27
+       7   USER-NAME. . . . . . . . . . .  21
+PP 5655-EC6 IBM Enterprise COBOL for z/OS  6.4.0 P241211       C2JHELO   Date 02/19/2025  Time 08:06:32   Page     5
+Context usage is indicated by the letter preceding a procedure-name reference.
+These letters and their meanings are:
+    A = ALTER (procedure-name)
+    D = GO TO (procedure-name) DEPENDING ON
+    E = End of range of (PERFORM) through (procedure-name)
+    G = GO TO (procedure-name)
+    P = PERFORM (procedure-name)
+    T = (ALTER) TO PROCEED TO (procedure-name)
+    U = USE FOR DEBUGGING (procedure-name)
+ 
+ Defined   Cross-reference of procedures   References
+ 
+      11   MAINPROGRAM
+PP 5655-EC6 IBM Enterprise COBOL for z/OS  6.4.0 P241211       C2JHELO   Date 02/19/2025  Time 08:06:32   Page     6
+ Defined   Cross-reference of programs     References
+ 
+       4   C2JHELO
+EXTERNAL   Java.com.ibm.jzos.ZUtil.redirectStandardStreams
+                                           15
+EXTERNAL   Java.test.HelloWorld.sayHelloTo
+                                           21
+* Statistics for COBOL program C2JHELO:
+*    Source records = 29
+*    Data Division statements = 2
+*    Procedure Division statements = 10
+*    Generated COBOL statements = 0
+*    Program complexity factor = 10
+End of compilation 1,  program C2JHELO,  no statements flagged.
+Return code 0
+WORK_DIR=/u/olivier/tmp/c2j
+/usr/lpp/java/J8.0_64/bin:/bin:.:/u/olivier::/usr/lpp/IBM/cobol/igyv6r4/bin:/usr/lpp/java/J8.0_64/bin
+ 
+Running cjbuild COBOL/Java build tool
+cjbuild, version 1.1.2
+compatible stub file version: 4.0
+=====================================
+ 
+ PROGRAM_FILE        = none
+ LIB_BASE_NAME       = c2jb1
+ COBOL_DIR           = /u/olivier/tmp/c2j/javaiop
+ DLL_OUT_DIR         = //'OLIVIER.BUILD.PDSE.LOAD'
+ JAVA_CLASS_DIR      = /u/olivier/tmp/c2j/class
+ JAVA_SRC_DIR        = /u/olivier/tmp/c2j/src
+ JAR_FILE            = ./libc2jb1.jar
+ CLEANUP_SCRIPT_NAME = cjbuild_clean.sh
+ PACKAGE_NAME        = com.ibm.zdevops
+ INTEROP_MODE        = MIX_31_64
+ JAVA_HOME           = /usr/lpp/java/J8.0_64
+ COBOL_INSTALL_DIR   = /usr/lpp/IBM/cobol/igyv6r4
+ 
+User env STEPLIB: IGY.SIGYCOMP
+ 
+Including file in app DLL: Ýcobol-calls-java stub¨ C2JHELO_Java.com.ibm.jzos.ZUtil.redirectStandardStreams
+Including file in app DLL: Ýcobol-calls-java stub¨ C2JHELO_Java.test.HelloWorld.sayHelloTo
+# Compiling Java call stub method C2JHELO_Java.com.ibm.jzos.ZUtil.redirectStandardStreams
+/usr/lpp/IBM/cobol/igyv6r4/bin/cob2 -qlist -qopt(1),nsymbol(national),dbcs,dispsign(sep) -c /u/olivier/tmp/c2j/javaiop/C2JHELO_Java.com.ibm.jzos.ZUtil.redirectStandardStreams.cbl -I /usr/lpp/IBM/cobol/igyv6r4/include
+# Command return code 0
+ 
+# Compiling Java call stub method C2JHELO_Java.test.HelloWorld.sayHelloTo
+/usr/lpp/IBM/cobol/igyv6r4/bin/cob2 -qlist -qopt(1),nsymbol(national),dbcs,dispsign(sep) -c /u/olivier/tmp/c2j/javaiop/C2JHELO_Java.test.HelloWorld.sayHelloTo.cbl -I /usr/lpp/IBM/cobol/igyv6r4/include
+# Command return code 0
+ 
+# Compiling WS access object invalidate routine
+/usr/lpp/IBM/cobol/igyv6r4/bin/cob2 -qlist -qopt(1),nsymbol(national),dbcs,dispsign(sep) -c igycjimc.cbl -I /usr/lpp/IBM/cobol/igyv6r4/include
+# Command return code 0
+ 
+# Compiling Call to JAVA exception check routine
+/usr/lpp/IBM/cobol/igyv6r4/bin/cob2 -qlist -qopt(1),nsymbol(national),dbcs,dispsign(sep) -c igycjest.cbl -I /usr/lpp/IBM/cobol/igyv6r4/include
+# Command return code 0
+ 
+# Linking native method DLL
+/usr/lpp/IBM/cobol/igyv6r4/bin/cob2 -bdll,map -o //'OLIVIER.BUILD.PDSE.LOAD(libc2jb1)' C2JHELO_Java.com.ibm.jzos.ZUtil.redirectStandardStreams.o C2JHELO_Java.test.HelloWorld.sayHelloTo.o igycjimc.o igycjest.o /usr/lpp/java/J8.0_64/lib/s390x/default/libjvm31.x /usr/lpp/IBM/cobol/igyv6r4/lib/igzxjni2.x > libc2jb1.map
+# Command return code 0
+ 
+# Copying DLL side deck to current directory
+cp -F bin //'OLIVIER.BUILD.PDSE.EXP(libc2jb1)' libc2jb1.x
+# Command return code 0
+ 
+ 
+cjbuild completed successfully.
+===============================
+ 
+WORK_DIR=/u/olivier/tmp/c2j
+/usr/lpp/java/J8.0_64/bin:/bin:.:/u/olivier::/usr/lpp/IBM/cobol/igyv6r4/bin:/usr/lpp/java/J8.0_64/bin
+1z/OS V3 R1 BINDER     08:06:34 WEDNESDAY FEBRUARY 19, 2025
+ c89 ---------------------------------------------------------------------------
+ IEW2322I 1220  1     INCLUDE C8920
+ IEW2322I 1220  2     INCLUDE C8921
+ IEW2322I 1220  3     INCLUDE '././libc2jb1.x'
+ IEW2322I 1220  9     AUTOCALL C8961
+ 
+1                         *** M O D U L E  M A P ***
+ 
+ ---------------
+ CLASS  C_CODE            LENGTH =     1F14  ATTRIBUTES = CAT,   LOAD, RMODE=ANY
+                          OFFSET =        0 IN SEGMENT 001     ALIGN = DBLWORD
+ ---------------
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+                 0  C2JHELO            CSECT       CE8  C8921     01  C2JHELO
+        0        0     C2JHELO#C          LABEL
+        0        0     C2JHELO            LABEL
+ 
+               CE8  CEESG003        *  CSECT       129  C8961     01  EDC40269
+        0      CE8     CEESG003           LABEL
+ 
+               E18  EDCOXTER        *  CSECT        F0  C8961     01  EDC403A6
+        0      E18     EDCOXTER           LABEL
+ 
+               F08  @@OXTER         *  CSECT         4  C8961     01  EDC403A6
+        0      F08     @@OXTER            LABEL
+ 
+               F10  EDCOXSTE        *  CSECT        D0  C8961     01  EDC40365
+        0      F10     EDCOXSTE           LABEL
+ 
+               FE0  @@OXSTE         *  CSECT         4  C8961     01  EDC40365
+        0      FE0     @@OXSTE            LABEL
+ 
+               FE8  EDCOXSTO        *  CSECT        D0  C8961     01  EDC40367
+        0      FE8     EDCOXSTO           LABEL
+ 
+              10B8  @@OXSTO         *  CSECT         4  C8961     01  EDC40367
+        0     10B8     @@OXSTO            LABEL
+ 
+              10C0  EDCOXSTI        *  CSECT        D0  C8961     01  EDC40366
+        0     10C0     EDCOXSTI           LABEL
+ 
+              1190  @@OXSTI         *  CSECT         4  C8961     01  EDC40366
+        0     1190     @@OXSTI            LABEL
+ 
+              1198  EDCOXLC2        *  CSECT        D0  C8961     01  EDC4035E
+        0     1198     EDCOXLC2           LABEL
+ 
+              1268  @@OXLC2         *  CSECT         4  C8961     01  EDC4035E
+        0     1268     @@OXLC2            LABEL
+ 
+              1270  EDCOXLC1        *  CSECT        D0  C8961     01  EDC4035D
+        0     1270     EDCOXLC1           LABEL
+ 
+              1340  @@OXLC1         *  CSECT         4  C8961     01  EDC4035D
+        0     1340     @@OXLC1            LABEL
+ 
+              1348  EDCOXLCS        *  CSECT        D0  C8961     01  EDC4035C
+        0     1348     EDCOXLCS           LABEL
+ 
+              1418  @@OXLCS         *  CSECT         4  C8961     01  EDC4035C
+        0     1418     @@OXLCS            LABEL
+ 
+              1420  EDCOXLO1        *  CSECT        D0  C8961     01  EDC4035F
+1                         *** M O D U L E  M A P ***
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+        0     1420     EDCOXLO1           LABEL
+ 
+              14F0  @@OXL@1         *  CSECT         4  C8961     01  EDC4035F
+        0     14F0     @@OXL@1            LABEL
+ 
+              14F8  EDCOXDAL        *  CSECT        D0  C8961     01  EDC40357
+        0     14F8     EDCOXDAL           LABEL
+ 
+              15C8  @@OXDAL         *  CSECT         4  C8961     01  EDC40357
+        0     15C8     @@OXDAL            LABEL
+ 
+              15D0  EDCOXTIZ        *  CSECT        D0  C8961     01  EDC40368
+        0     15D0     EDCOXTIZ           LABEL
+ 
+              16A0  @@OXTIZ         *  CSECT         4  C8961     01  EDC40368
+        0     16A0     @@OXTIZ            LABEL
+ 
+              16A8  EDCOXSNG        *  CSECT        D0  C8961     01  EDC40364
+        0     16A8     EDCOXSNG           LABEL
+ 
+              1778  @@OXSNG         *  CSECT         4  C8961     01  EDC40364
+        0     1778     @@OXSNG            LABEL
+ 
+              1780  EDCOXOPO        *  CSECT        D0  C8961     01  EDC40363
+        0     1780     EDCOXOPO           LABEL
+ 
+              1850  @@OXOPO         *  CSECT         4  C8961     01  EDC40363
+        0     1850     @@OXOPO            LABEL
+ 
+              1858  EDCOXOPI        *  CSECT        D0  C8961     01  EDC40362
+        0     1858     EDCOXOPI           LABEL
+ 
+              1928  @@OXOPI         *  CSECT         4  C8961     01  EDC40362
+        0     1928     @@OXOPI            LABEL
+ 
+              1930  EDCOXOPE        *  CSECT        D0  C8961     01  EDC40361
+        0     1930     EDCOXOPE           LABEL
+ 
+              1A00  @@OXOPE         *  CSECT         4  C8961     01  EDC40361
+        0     1A00     @@OXOPE            LABEL
+ 
+              1A08  EDCOXOPA        *  CSECT        D0  C8961     01  EDC40360
+        0     1A08     EDCOXOPA           LABEL
+ 
+              1AD8  @@OXOPA         *  CSECT         4  C8961     01  EDC40360
+        0     1AD8     @@OXOPA            LABEL
+ 
+              1AE0  EDCOXHER        *  CSECT        D0  C8961     01  EDC4035B
+        0     1AE0     EDCOXHER           LABEL
+ 
+              1BB0  @@OXHER         *  CSECT         4  C8961     01  EDC4035B
+        0     1BB0     @@OXHER            LABEL
+ 
+              1BB8  EDCOXGDE        *  CSECT        D0  C8961     01  EDC4035A
+        0     1BB8     EDCOXGDE           LABEL
+1                         *** M O D U L E  M A P ***
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+ 
+              1C88  @@OXGDE         *  CSECT         4  C8961     01  EDC4035A
+        0     1C88     @@OXGDE            LABEL
+ 
+              1C90  EDCOXTZN        *  CSECT        D0  C8961     01  EDC4026C
+        0     1C90     EDCOXTZN           LABEL
+ 
+              1D60  @@OXTZN         *  CSECT         4  C8961     01  EDC4026C
+        0     1D60     @@OXTZN            LABEL
+ 
+              1D68  EDCOXERN        *  CSECT        D0  C8961     01  EDC4026B
+        0     1D68     EDCOXERN           LABEL
+ 
+              1E38  @@OXERN         *  CSECT         4  C8961     01  EDC4026B
+        0     1E38     @@OXERN            LABEL
+ 
+              1E40  EDCOXENV        *  CSECT        D0  C8961     01  EDC4026A
+        0     1E40     EDCOXENV           LABEL
+ 
+              1F10  @@OXENV         *  CSECT         4  C8961     01  EDC4026A
+        0     1F10     @@OXENV            LABEL
+1                         *** M O D U L E  M A P ***
+ 
+ ---------------
+ CLASS  B_TEXT            LENGTH =      C7C  ATTRIBUTES = CAT,   LOAD, RMODE=ANY
+                          OFFSET =     1F18 IN SEGMENT 001     ALIGN = DBLWORD
+ ---------------
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+                 0  EDCOEXTS           CSECT         C  C8920     01  **NULL**
+ 
+                10  IGZXBS61        *  CSECT        10  SYSLIB    02  IGZXBS61
+ 
+                20  CEESG004        *  CSECT        34  SYSLIB    02  CEESG004
+ 
+                58  IGZXRT1         *  CSECT        12  SYSLIB    02  IGZXRT1
+ 
+                70  IGZXTREN        *  CSECT        12  SYSLIB    02  IGZXTREN
+ 
+                88  IGZXRTN         *  CSECT        12  SYSLIB    02  IGZXRTN
+ 
+                A0  IGZXDSP         *  CSECT        12  SYSLIB    02  IGZXDSP
+ 
+                B8  IGZXCMSG        *  CSECT        12  SYSLIB    02  IGZXCMSG
+ 
+                D0  IGZXPRS         *  CSECT        12  SYSLIB    02  IGZXPRS
+ 
+                E8  IGZXBST4        *  CSECT       4E0  SYSLIB    02  IGZXBST4
+ 
+               5C8  CEEBETBL        *  CSECT        28  SYSLIB    02  CEEBETBL
+ 
+               5F0  CEESTART        *  CSECT        B0  SYSLIB    02  CEESTART
+ 
+               6A0  CEEMAIN         *  CSECT        30  SYSLIB    02  CEEMAIN
+        0      6A0     EDCDMAIN           LABEL
+ 
+               6D0  CEEBPUBT        *  CSECT        70  SYSLIB    02  CEEBPUBT
+ 
+               740  CEEBTRM         *  CSECT        74  SYSLIB    02  CEEBTRM
+ 
+               7B8  CEECPYRT        *  CSECT        CF  SYSLIB    02  CEEBTRM
+ 
+               888  CEEBLLST        *  CSECT        5C  SYSLIB    02  CEEBLLST
+       10      898     CEELLIST           LABEL
+ 
+               8E8  CEEBINT         *  CSECT         8  SYSLIB    02  CEEBINT
+ 
+               8F0  CEEARLU         *  CSECT        B8  SYSLIB    02  CEEARLU
+ 
+               9A8  CEEBPIRA        *  CSECT       2A0  SYSLIB    02  CEEINT
+        0      9A8     CEEINT             LABEL
+        0      9A8     CEEBPIRB           LABEL
+        0      9A8     CEEBPIRC           LABEL
+ 
+               C48  CEETLOC         *  CSECT        1C  SYSLIB    02  CEETLOC
+ 
+               C68  CEETGTFN        *  CSECT        14  SYSLIB    02  CEETGTFN
+1                         *** M O D U L E  M A P ***
+ 
+ ---------------
+ CLASS  C_@@DLLI          LENGTH =        8  ATTRIBUTES = MRG,   LOAD, RMODE=ANY
+                          OFFSET =     2B98 IN SEGMENT 001     ALIGN = DBLWORD
+ ---------------
+ 
+             CLASS
+            OFFSET  NAME                TYPE    LENGTH   SECTION
+                 0  $PRIV000010      PART             8  C2JHELO
+ 
+ ---------------
+ CLASS  C_@@PPA2          LENGTH =        8  ATTRIBUTES = MRG,   LOAD, RMODE=ANY
+                          OFFSET =     2BA0 IN SEGMENT 001     ALIGN = DBLWORD
+ ---------------
+ 
+             CLASS
+            OFFSET  NAME                TYPE    LENGTH   SECTION
+                 0  $PRIV000011      PART             8  C2JHELO
+ 
+ ---------------
+ CLASS  C_@@CSINIT        LENGTH =        4  ATTRIBUTES = MRG,   LOAD, RMODE=ANY
+                          OFFSET =     2BA8 IN SEGMENT 001     ALIGN = DBLWORD
+ ---------------
+ 
+             CLASS
+            OFFSET  NAME                TYPE    LENGTH   SECTION
+                 0  $PRIV000012      PART             4  C2JHELO
+ 
+ ---------------
+ CLASS  B_LIT             LENGTH =      140  ATTRIBUTES = CAT,   LOAD, RMODE=ANY
+                          OFFSET =     2BB0 IN SEGMENT 001     ALIGN = DBLWORD
+ ---------------
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+                 0  IEWBLIT            CSECT       140                **NULL**
+        0        0     IEWBLIT            LABEL
+ 
+ ---------------
+ CLASS  B_IMPEXP          LENGTH =      106  ATTRIBUTES = CAT,   LOAD, RMODE=ANY
+                          OFFSET =     2CF0 IN SEGMENT 001     ALIGN = DBLWORD
+ ---------------
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+                 0  IEWBCIE            CSECT       106                **NULL**
+        0        0     IEWBCIE            LABEL
+1                         *** M O D U L E  M A P ***
+ 
+ ---------------
+ CLASS  C_WSA             LENGTH =      194  ATTRIBUTES = MRG, DEFER , RMODE=ANY
+                          OFFSET =        0 IN SEGMENT 002     ALIGN = DBLWORD
+ ---------------
+ 
+             CLASS
+            OFFSET  NAME                TYPE    LENGTH   SECTION
+                 0  C2JHELO_J-elloTo DESCRIPTOR      20
+                20  C2JHELO_J-treams DESCRIPTOR      20
+                40  IGYCJEST         DESCRIPTOR      20
+                60  optopt           PART             4  optopt
+                68  environ          PART             4  environ
+                70  errno            PART             4  errno
+                78  tzname           PART             8  tzname
+                80  getdate_err      PART             4  getdate_err
+                88  h_errno          PART             4  h_errno
+                90  optarg           PART             4  optarg
+                98  opterr           PART             4  opterr
+                A0  optind           PART             4  optind
+                A8  loc1             PART             4  loc1
+                B0  signgam          PART             4  signgam
+                B8  timezone         PART             4  timezone
+                C0  daylight         PART             4  daylight
+                C8  __loc1           PART             4  __loc1
+                D0  locs             PART             4  locs
+                D8  stdout           PART             4  stdout
+                E0  loc2             PART             4  loc2
+                E8  stdin            PART             4  stdin
+                F0  stderr           PART             4  stderr
+                F8  t_errno          PART             4  t_errno
+               100  C2JHELO#S        PART            94  C2JHELO
+ 
+ ---------------
+ CLASS  C_CEESG003        LENGTH =        0  ATTRIBUTES = CAT, NOLOAD
+ 
+ ---------------
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+                 0  C2JHELO            CSECT         0  C8921     01  C2JHELO
+ 
+ ---------------
+ CLASS  D_MCODE           LENGTH =     2406  ATTRIBUTES = CAT, NOLOAD
+ 
+ ---------------
+ 
+  SECTION    CLASS                                      ------- SOURCE --------
+   OFFSET   OFFSET  NAME                TYPE    LENGTH  DDNAME   SEQ  MEMBER
+ 
+                 0  C2JHELO            CSECT      2406  C8921     01  C2JHELO
+1          ***  DATA SET SUMMARY  ***
+ 
+ DDNAME    CONCAT   FILE IDENTIFICATION
+ 
+ C8920       01     SYS25050.T080635.RA000.C2J#SAMP.R0154607
+ C8921       01     OLIVIER.BUILD.OBJ
+ C8961       01     CEE.SCEEOBJ
+ SYSLIB      02     CEE.SCEELKED
+1          *** SYMBOL REFERENCES NOT ASSOCIATED WITH ANY ADCON ***
+ 
+ TYPE   SCOPE   NAME
+ 
+ 
+           *** E N D  O F  M O D U L E  M A P ***
+ 
+ 
+1                                       C R O S S - R E F E R E N C E  T A B L E
+                                        _________________________________________
+ 
+ TEXT CLASS = C_CODE
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+       24 C2JHELO                        24 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+       2C C2JHELO                        2C A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+       30 C2JHELO                        30 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+       34 C2JHELO                        34 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+       38 C2JHELO                        38 V-CON | IGZXBST4         IGZXBST4                        0 B_TEXT           |
+       3C C2JHELO                        3C A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+       44 C2JHELO                        44 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      810 C2JHELO                       810 Q-CON | C2JHELO#S        $NON-RELOCATABLE              100 C_WSA            |
+      820 C2JHELO                       820 V-CON | IGZXPRS          IGZXPRS                         0 B_TEXT           |
+      824 C2JHELO                       824 V-CON | IGZXCMSG         IGZXCMSG                        0 B_TEXT           |
+      828 C2JHELO                       828 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      82C C2JHELO                       82C A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      830 C2JHELO                       830 V-CON | IGZXDSP          IGZXDSP                         0 B_TEXT           |
+      834 C2JHELO                       834 Q-CON | C2JHELO_J-treams $NON-RELOCATABLE               20 C_WSA            |
+      838 C2JHELO                       838 Q-CON | IGYCJEST         $NON-RELOCATABLE               40 C_WSA            |
+      83C C2JHELO                       83C V-CON | IGZXRTN          IGZXRTN                         0 B_TEXT           |
+      840 C2JHELO                       840 V-CON | IGZXTREN         IGZXTREN                        0 B_TEXT           |
+      844 C2JHELO                       844 Q-CON | C2JHELO_J-elloTo $NON-RELOCATABLE                0 C_WSA            |
+      848 C2JHELO                       848 Q-CON | IGYCJEST         $NON-RELOCATABLE               40 C_WSA            |
+      84C C2JHELO                       84C V-CON | IGZXRT1          IGZXRT1                         0 B_TEXT           |
+      86C C2JHELO                       86C A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      878 C2JHELO                       878 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      898 C2JHELO                       898 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      8D8 C2JHELO                       8D8 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      918 C2JHELO                       918 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      940 C2JHELO                       940 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      964 C2JHELO                       964 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      988 C2JHELO                       988 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      9C8 C2JHELO                       9C8 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      C44 C2JHELO                       C44 A-CON | CEESTART         CEESTART                        0 B_TEXT           |
+      C44 C2JHELO                       C44 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      C5C C2JHELO                       C5C A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      C60 C2JHELO                       C60 V-CON | CEESTART         CEESTART                        0 B_TEXT           |
+      C64 C2JHELO                       C64 V-CON | CEEBETBL         CEEBETBL                        0 B_TEXT           |
+      CA4 C2JHELO                       CA4 Q-CON | C2JHELO#S        $NON-RELOCATABLE              100 C_WSA            |
+      CF4 CEESG003                        C A-CON | $PRIV000014      $UNRESOLVED(W)                                     |
+      CF8 CEESG003                       10 A-CON | $PRIV000013      $UNRESOLVED(W)                                     |
+      D00 CEESG003                       18 A-CON | CTDLI            $UNRESOLVED(W)                                     |
+      D18 CEESG003                       30 V-CON | @@OXENV          @@OXENV                         0 C_CODE           |
+      D1C CEESG003                       34 V-CON | @@OXERN          @@OXERN                         0 C_CODE           |
+      D20 CEESG003                       38 V-CON | @@OXTZN          @@OXTZN                         0 C_CODE           |
+      D24 CEESG003                       3C Q-CON | environ          $NON-RELOCATABLE               68 C_WSA            |
+      D28 CEESG003                       40 Q-CON | errno            $NON-RELOCATABLE               70 C_WSA            |
+      D2C CEESG003                       44 Q-CON | tzname           $NON-RELOCATABLE               78 C_WSA            |
+      D30 CEESG003                       48 A-CON | @@DLL            $UNRESOLVED(W)                                     |
+      D34 CEESG003                       4C A-CON | @@DLLUX          $UNRESOLVED(W)                                     |
+      D38 CEESG003                       50 A-CON | @@DLLI           $UNRESOLVED(W)                                     |
+ 
+ 
+1                                       C R O S S - R E F E R E N C E  T A B L E
+                                        _________________________________________
+ 
+ TEXT CLASS = C_CODE
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+      D3C CEESG003                       54 A-CON | CBCSG003         $UNRESOLVED(W)                                     |
+      D40 CEESG003                       58 V-CON | @@OXGDE          @@OXGDE                         0 C_CODE           |
+      D44 CEESG003                       5C Q-CON | getdate_err      $NON-RELOCATABLE               80 C_WSA            |
+      D48 CEESG003                       60 V-CON | @@OXHER          @@OXHER                         0 C_CODE           |
+      D4C CEESG003                       64 Q-CON | h_errno          $NON-RELOCATABLE               88 C_WSA            |
+      D50 CEESG003                       68 V-CON | @@OXOPA          @@OXOPA                         0 C_CODE           |
+      D54 CEESG003                       6C Q-CON | optarg           $NON-RELOCATABLE               90 C_WSA            |
+      D58 CEESG003                       70 V-CON | @@OXOPE          @@OXOPE                         0 C_CODE           |
+      D5C CEESG003                       74 Q-CON | opterr           $NON-RELOCATABLE               98 C_WSA            |
+      D60 CEESG003                       78 V-CON | @@OXOPI          @@OXOPI                         0 C_CODE           |
+      D64 CEESG003                       7C Q-CON | optind           $NON-RELOCATABLE               A0 C_WSA            |
+      D68 CEESG003                       80 V-CON | @@OXOPO          @@OXOPO                         0 C_CODE           |
+      D6C CEESG003                       84 Q-CON | optopt           $NON-RELOCATABLE               60 C_WSA            |
+      D70 CEESG003                       88 V-CON | @@OXSNG          @@OXSNG                         0 C_CODE           |
+      D74 CEESG003                       8C Q-CON | signgam          $NON-RELOCATABLE               B0 C_WSA            |
+      D78 CEESG003                       90 V-CON | @@OXTIZ          @@OXTIZ                         0 C_CODE           |
+      D7C CEESG003                       94 Q-CON | timezone         $NON-RELOCATABLE               B8 C_WSA            |
+      D80 CEESG003                       98 V-CON | @@OXDAL          @@OXDAL                         0 C_CODE           |
+      D84 CEESG003                       9C Q-CON | daylight         $NON-RELOCATABLE               C0 C_WSA            |
+      D88 CEESG003                       A0 V-CON | @@OXL@1          @@OXL@1                         0 C_CODE           |
+      D8C CEESG003                       A4 Q-CON | __loc1           $NON-RELOCATABLE               C8 C_WSA            |
+      D90 CEESG003                       A8 V-CON | @@OXLCS          @@OXLCS                         0 C_CODE           |
+      D94 CEESG003                       AC Q-CON | locs             $NON-RELOCATABLE               D0 C_WSA            |
+      D98 CEESG003                       B0 V-CON | @@OXLC1          @@OXLC1                         0 C_CODE           |
+      D9C CEESG003                       B4 Q-CON | loc1             $NON-RELOCATABLE               A8 C_WSA            |
+      DA0 CEESG003                       B8 V-CON | @@OXLC2          @@OXLC2                         0 C_CODE           |
+      DA4 CEESG003                       BC Q-CON | loc2             $NON-RELOCATABLE               E0 C_WSA            |
+      DA8 CEESG003                       C0 V-CON | @@OXSTI          @@OXSTI                         0 C_CODE           |
+      DAC CEESG003                       C4 Q-CON | stdin            $NON-RELOCATABLE               E8 C_WSA            |
+      DB0 CEESG003                       C8 V-CON | @@OXSTO          @@OXSTO                         0 C_CODE           |
+      DB4 CEESG003                       CC Q-CON | stdout           $NON-RELOCATABLE               D8 C_WSA            |
+      DB8 CEESG003                       D0 V-CON | @@OXSTE          @@OXSTE                         0 C_CODE           |
+      DBC CEESG003                       D4 Q-CON | stderr           $NON-RELOCATABLE               F0 C_WSA            |
+      DC0 CEESG003                       D8 V-CON | @@OXTER          @@OXTER                         0 C_CODE           |
+      DC4 CEESG003                       DC Q-CON | t_errno          $NON-RELOCATABLE               F8 C_WSA            |
+      DC8 CEESG003                       E0 A-CON | @@PPA2           $UNRESOLVED(W)                                     |
+ 
+ 
+ TEXT CLASS = B_TEXT
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+       34 CEESG004                       14 A-CON | IGZEOPT          $UNRESOLVED(W)                                     |
+       38 CEESG004                       18 A-CON | IGZETUN          $UNRESOLVED(W)                                     |
+       3C CEESG004                       1C A-CON | IGZXRES1         $UNRESOLVED(W)                                     |
+ 
+ 
+1                                       C R O S S - R E F E R E N C E  T A B L E
+                                        _________________________________________
+ 
+ TEXT CLASS = B_TEXT
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+       40 CEESG004                       20 A-CON | IEWBLIT          IEWBLIT                         0 B_LIT            |
+      538 IGZXBST4                      450 V-CON | CEEINT           CEEBPIRA                        0 B_TEXT           |
+      53C IGZXBST4                      454 V-CON | CEEARLU          CEEARLU                         0 B_TEXT           |
+      540 IGZXBST4                      458 A-CON | CEESG004         CEESG004                        0 B_TEXT           |
+      5CC CEEBETBL                        4 V-CON | CEEBXITA         $UNRESOLVED(W)                                     |
+      5D0 CEEBETBL                        8 V-CON | CEEBINT          CEEBINT                         0 B_TEXT           |
+      5D4 CEEBETBL                        C V-CON | CEEBLLST         CEEBLLST                        0 B_TEXT           |
+      5D8 CEEBETBL                       10 V-CON | CEEUOPT          $UNRESOLVED(W)                                     |
+      5DC CEEBETBL                       14 V-CON | CEEBTRM          CEEBTRM                         0 B_TEXT           |
+      5E4 CEEBETBL                       1C V-CON | CEEBPUBT         CEEBPUBT                        0 B_TEXT           |
+      5E8 CEEBETBL                       20 V-CON | IEWBLIT          IEWBLIT                         0 B_LIT            |
+      64C CEESTART                       5C A-CON | CEEMAIN          CEEMAIN                         0 B_TEXT           |
+      65C CEESTART                       6C C-LEN |                  $NON-RELOCATABLE                  B_PRV            |
+      688 CEESTART                       98 A-CON | CEEFMAIN         $UNRESOLVED(W)                                     |
+      694 CEESTART                       A4 A-CON | CEEBETBL         CEEBETBL                        0 B_TEXT           |
+      698 CEESTART                       A8 A-CON | CEEROOTA         $UNRESOLVED(W)                                     |
+      69C CEESTART                       AC A-CON | CEEROOTD         $UNRESOLVED(W)                                     |
+      7AC CEEBTRM                        6C A-CON | CEEBPUBT         CEEBPUBT                        0 B_TEXT           |
+      898 CEEBLLST                       10 A-CON | CEESG000         $UNRESOLVED(W)                                     |
+      89C CEEBLLST                       14 A-CON | CEESG001         $UNRESOLVED(W)                                     |
+      8A0 CEEBLLST                       18 A-CON | CEESG002         $UNRESOLVED(W)                                     |
+      8A4 CEEBLLST                       1C A-CON | CEESG003         CEESG003                        0 C_CODE           |
+      8A8 CEEBLLST                       20 A-CON | CEESG004         CEESG004                        0 B_TEXT           |
+      8AC CEEBLLST                       24 A-CON | CEESG005         $UNRESOLVED(W)                                     |
+      8B0 CEEBLLST                       28 A-CON | CEESG006         $UNRESOLVED(W)                                     |
+      8B4 CEEBLLST                       2C A-CON | CEESG007         $UNRESOLVED(W)                                     |
+      8B8 CEEBLLST                       30 A-CON | CEESG008         $UNRESOLVED(W)                                     |
+      8BC CEEBLLST                       34 A-CON | CEESG009         $UNRESOLVED(W)                                     |
+      8C0 CEEBLLST                       38 A-CON | CEESG010         $UNRESOLVED(W)                                     |
+      8C4 CEEBLLST                       3C A-CON | CEESG011         $UNRESOLVED(W)                                     |
+      8C8 CEEBLLST                       40 A-CON | CEESG012         $UNRESOLVED(W)                                     |
+      8CC CEEBLLST                       44 A-CON | CEESG013         $UNRESOLVED(W)                                     |
+      8D0 CEEBLLST                       48 A-CON | CEESG014         $UNRESOLVED(W)                                     |
+      8D4 CEEBLLST                       4C A-CON | CEESG015         $UNRESOLVED(W)                                     |
+      8D8 CEEBLLST                       50 A-CON | CEESG016         $UNRESOLVED(W)                                     |
+      BD8 CEEBPIRA                      230 A-CON | CEEBPUBT         CEEBPUBT                        0 B_TEXT           |
+ 
+ 
+ TEXT CLASS = C_@@DLLI
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+        4 $PRIV000010                     4 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+ 
+ 
+ TEXT CLASS = C_@@PPA2
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+1  OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+        4 $PRIV000011                     4 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+ 
+ 
+1                                       C R O S S - R E F E R E N C E  T A B L E
+                                        _________________________________________
+ 
+ TEXT CLASS = C_@@PPA2
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+ 
+ 
+ TEXT CLASS = C_@@CSINIT
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+        0 $PRIV000012                     0 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+ 
+ 
+ TEXT CLASS = B_LIT
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+       28 IEWBLIT                        28 L TOKE|                                                                     |
+       30 IEWBLIT                        30 A-CON |                                                    B_IMPEXP         |
+       50 IEWBLIT                        50 C-LEN |                  $NON-RELOCATABLE                  B_TEXT           |
+       54 IEWBLIT                        54 A-CON |                                                    B_TEXT           |
+       70 IEWBLIT                        70 C-LEN |                  $NON-RELOCATABLE                  C_CODE           |
+       74 IEWBLIT                        74 A-CON |                                                    C_CODE           |
+       90 IEWBLIT                        90 C-LEN |                  $NON-RELOCATABLE                  C_WSA            |
+       B0 IEWBLIT                        B0 C-LEN |                  $NON-RELOCATABLE                  C_@@DLLI         |
+       B4 IEWBLIT                        B4 A-CON |                                                    C_@@DLLI         |
+       D0 IEWBLIT                        D0 C-LEN |                  $NON-RELOCATABLE                  C_@@PPA2         |
+       D4 IEWBLIT                        D4 A-CON |                                                    C_@@PPA2         |
+       F0 IEWBLIT                        F0 C-LEN |                  $NON-RELOCATABLE                  C_@@CSINIT       |
+       F4 IEWBLIT                        F4 A-CON |                                                    C_@@CSINIT       |
+      110 IEWBLIT                       110 C-LEN |                  $NON-RELOCATABLE                  B_IMPEXP         |
+      114 IEWBLIT                       114 A-CON |                                                    B_IMPEXP         |
+      130 IEWBLIT                       130 C-LEN |                  $NON-RELOCATABLE                  B_LIT            |
+      134 IEWBLIT                       134 A-CON |                                                    B_LIT            |
+ 
+ 
+ TEXT CLASS = B_IMPEXP
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+ 
+ 
+ TEXT CLASS = C_WSA
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+        8 C2JHELO_J-elloTo                8 V-CON | CEETLOC          CEETLOC                         0 B_TEXT           |
+1
+ 
+1                                       C R O S S - R E F E R E N C E  T A B L E
+                                        _________________________________________
+ 
+ TEXT CLASS = C_WSA
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+        C C2JHELO_J-elloTo                C A-CON | C2JHELO_J-elloTo $PRIV000003                     0 C_WSA            |
+       10 C2JHELO_J-elloTo               10 V-CON | CEETGTFN         CEETGTFN                        0 B_TEXT           |
+       14 C2JHELO_J-elloTo               14 A-CON |                                                    B_IMPEXP         |
+       18 C2JHELO_J-elloTo               18 V-CON | CEESTART         CEESTART                        0 B_TEXT           |
+       1C C2JHELO_J-elloTo               1C A-CON |                                                    C_WSA            |
+       28 C2JHELO_J-treams               28 V-CON | CEETLOC          CEETLOC                         0 B_TEXT           |
+       2C C2JHELO_J-treams               2C A-CON | C2JHELO_J-treams $PRIV000003                    20 C_WSA            |
+       30 C2JHELO_J-treams               30 V-CON | CEETGTFN         CEETGTFN                        0 B_TEXT           |
+       34 C2JHELO_J-treams               34 A-CON |                                                    B_IMPEXP         |
+       38 C2JHELO_J-treams               38 V-CON | CEESTART         CEESTART                        0 B_TEXT           |
+       3C C2JHELO_J-treams               3C A-CON |                                                    C_WSA            |
+       48 IGYCJEST                       48 V-CON | CEETLOC          CEETLOC                         0 B_TEXT           |
+       4C IGYCJEST                       4C A-CON | IGYCJEST         $PRIV000003                    40 C_WSA            |
+       50 IGYCJEST                       50 V-CON | CEETGTFN         CEETGTFN                        0 B_TEXT           |
+       54 IGYCJEST                       54 A-CON |                                                    B_IMPEXP         |
+       58 IGYCJEST                       58 V-CON | CEESTART         CEESTART                        0 B_TEXT           |
+       5C IGYCJEST                       5C A-CON |                                                    C_WSA            |
+      114 C2JHELO#S                     114 A-CON | C2JHELO#S        $PRIV000003                   100 C_WSA            |
+      118 C2JHELO#S                     118 A-CON | C2JHELO#C        C2JHELO                         0 C_CODE           |
+      160 C2JHELO#S                     160 V-CON | C2JHELO          C2JHELO                         0 C_CODE           |
+      174 C2JHELO#S                     174 A-CON | C2JHELO#S        $PRIV000003                   100 C_WSA            |
+ 
+ 
+ TEXT CLASS = D_MCODE
+ 
+ ---------------  R E F E R E N C E  --------------------------  T A R G E T  -------------------------------------------
+   CLASS                            ELEMENT       |                                            ELEMENT                  |
+   OFFSET SECT/PART(ABBREV)          OFFSET  TYPE | SYMBOL(ABBREV)   SECTION (ABBREV)           OFFSET CLASS NAME       |
+                                                  |                                                                     |
+                                        *** E N D  O F  C R O S S  R E F E R E N C E ***
+ 
+ 
+ 
+1                           ***  I M P O R T E D   A N D   E X P O R T E D   S Y M B O L S  ***
+                                                                    ------- SOURCE --------
+  IMPORT/EXPORT     TYPE    SYMBOL              DLL                 DDNAME   SEQ  MEMBER
+  -------------     ------  ----------------    ----------------    -------- ---  ---------
+     IMPORT         CODE    C2JHELO_J-treams    LIBC2JB1            /0000001  01
+     IMPORT         CODE    C2JHELO_J-elloTo    LIBC2JB1            /0000001  01
+     IMPORT         CODE    IGYCJEST            LIBC2JB1            /0000001  01
+ 
+ 
+                     *** E N D   O F   I M P O R T E D   A N D   E X P O R T E D   S Y M B O L S ***
+ 
+ 
+ 
+ 
+ 
+                                 *** O P E R A T I O N   S U M M A R Y   R E P O R T ***
+ 
+1PROCESSING OPTIONS:
+ 
+    ALIASES             NO
+    ALIGN2              NO
+    AMODE                31
+    CALL                YES
+    CASE                MIXED
+    COMPAT              UNSPECIFIED
+    COMPRESS            AUTO
+    DCBS                NO
+    DYNAM               DLL
+    EXTATTR             UNSPECIFIED
+    EXITS:
+      MESSAGE
+    FILL                NONE
+    GID                 UNSPECIFIED
+    HOBSET              NO
+    INFO                NO
+    LET                 04
+    LINECT              060
+    LIST                NOIMP
+    LISTPRIV            NO
+    LONGPARM            NO
+    MAP                 YES
+    MAXBLK              032760
+    MODMAP              NO
+    MSGLEVEL            04
+    OVLY                NO
+    PRINT               YES
+    RES                 NO
+    REUSABILITY         REENTRANT
+    RMODE               ANY,INITIAL
+    RMODEX              NO
+    SIGN                NO
+    STORENX             NOREPLACE
+    STRIPCL             NO
+    STRIPSEC            NO
+    SYMTRACE
+    TERM                YES
+    TRAP                ON
+    UID                 UNSPECIFIED
+    UPCASE              NO
+    WKSPACE             000000K,000000K
+    XCAL                NO
+    XREF                YES
+    ***END OF OPTIONS***
+ 
+ 
+ 
+ 
+1SAVE OPERATION SUMMARY:
+ 
+    MEMBER NAME         C2JHELO
+    LOAD LIBRARY        OLIVIER.BUILD.PDSE.LOAD
+    PROGRAM TYPE        PROGRAM OBJECT(FORMAT 3)
+    VOLUME SERIAL       TSTO17
+    DISPOSITION         REPLACED
+    TIME OF SAVE        08.06.35  FEB 19, 2025
+ 
+ 
+1SAVE MODULE ATTRIBUTES:
+ 
+    AC                  000
+    AMODE                31
+    COMPRESSION         NONE
+    DC                  NO
+    EDITABLE            YES
+    EXCEEDS 16MB        NO
+    EXECUTABLE          YES
+    LONGPARM            NO
+    MIGRATABLE          NO
+    OL                  NO
+    OVLY                NO
+    PACK,PRIME          NO,NO
+    PAGE ALIGN          NO
+    REFR                NO
+    RENT                YES
+    REUS                YES
+    RMODE               ANY
+    SCTR                NO
+    SIGN                NO
+    SSI
+    SYM GENERATED       NO
+    TEST                NO
+    XPLINK              NO
+    MODULE SIZE (HEX)   00002F8C
+    DASD SIZE (HEX)     00017000
+ 
+ 
+1 ENTRY POINT AND ALIAS SUMMARY:
+ 
+  NAME:            ENTRY TYPE AMODE C_OFFSET CLASS NAME        STATUS
+ 
+  C2JHELO           MAIN_EP      31 00000000 C_CODE
+ 
+                          *** E N D   O F   O P E R A T I O N   S U M M A R Y   R E P O R T ***
+ 
+ 
+ 
+ 
+1                   *** L O N G  S Y M B O L  A B B R E V I A T I O N  T A B L E ***
+ 
+       ABBREVIATION        LONG SYMBOL
+ 
+       C2JHELO_J-elloTo := C2JHELO_Java_test_HelloWorld_sayHelloTo
+       C2JHELO_J-treams := C2JHELO_Java_com_ibm_jzos_ZUtil_redirectStandardStreams
+ 
+ 
+                    *** E N D  O F  L O N G  S Y M B O L  A B B R E V .  T A B L E ***
+ 
+ 
+ 
+ 
+ 
+1++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ |   D D N A M E         C R O S S R E F E R E N C E                      |
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+  DDNAME   MAPPED FROM
+ --------  ----------------------------------------------------------------
+ 
+ /0000001  ././libc2jb1.x
+ 
+ 
+                          *** END OF DDNAME CROSS REFERENCE ***
+ 
+ 
+ 
+ 
+ 
+1----------------------
+ MESSAGE SUMMARY REPORT
+ ----------------------
+  TERMINAL MESSAGES      (SEVERITY = 16)
+  NONE
+ 
+  SEVERE MESSAGES        (SEVERITY = 12)
+  NONE
+ 
+  ERROR MESSAGES         (SEVERITY = 08)
+  NONE
+ 
+  WARNING MESSAGES       (SEVERITY = 04)
+  NONE
+ 
+  INFORMATIONAL MESSAGES (SEVERITY = 00)
+  2322
+ 
+ 
+  **** END OF MESSAGE SUMMARY REPORT ****
+ 
+linker: /bin/c89 -Wl,LIST,MAP,XREF -o //'OLIVIER.BUILD.PDSE.LOAD(C2JHELO)' -e // //'OLIVIER.BUILD.OBJ(C2JHELO)' ./libc2jb1.x
+IGD01007I DATA CLASS ASSIGNED =
+IGD01008I IN SCHG.  &UNIT = SYSDA
+IGD01007I DATA CLASS ASSIGNED =
+IGD01008I IN SCHG.  &UNIT = SYSDA
+COBOL started, test1
+Java returned:All good!
+COBOL ended
+Java says: Hello Olivier    and welcome to Java!
