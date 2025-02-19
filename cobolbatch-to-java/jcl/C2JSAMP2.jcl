@@ -1,12 +1,10 @@
-//C2JSAMP JOB ,
+//C2J#SAMP JOB ,
 // MSGCLASS=H,REGION=0M
 //*************************************************************
 //*
-//* Created by Olivier Gauneau
-//*
 //*  JCL to compile, and run
-//*  a 31 bit COBOL program (DD CBLSRC) calling a
-//*  static 64 bit Java method (DD JAVASRC)
+//*  an COBOL program (DD CBLSRC) calling a
+//*  static Java method (DD JAVASRC)
 //*
 //*  Java output is written to DD STDOUT
 //*  COBOL output is written to DD SYSOUT
@@ -16,18 +14,23 @@
 //* JCL variables (&VAR.) are substituted in STDENV DD
 //* so that STDPARM DD is similar to a USS shell script
 //* and uses env variables ($VAR.)
+//*
+//* tested with COBOL compiler v6.4.0 P241211 and Java v17
+//*
 //*************************************************************
+//*
 //        EXPORT SYMLIST=*
-// SET COBPRFX='IGY.V6R4M0'
+// SET COBPRFX='IGY'
+// SET COBPATH='/usr/lpp/IBM/cobol/igyv6r4'
 // SET LIBPRFX='CEE'
-// SET JAVAHOME='/usr/lpp/java/J11.0_64'
-// SET COBPDS='GAUNEAU.SRC.COBOL'
-// SET LOADLIB='BUILDER.TEST.PDSE.LOAD'
-// SET WORKDIR='/u/gauneau/tmp/c2j'
+// SET JAVAHOME='/usr/lpp/java/J17.0_64'
+// SET COBPDS='OLIVIER.SRC.COBOL'
+// SET LOADLIB='OLIVIER.BUILD.PDSE.LOAD'
+// SET OBJLIB='OLIVIER.BUILD.OBJ'
+// SET WORKDIR='/u/olivier/tmp/c2j'
 //*
 //*************************************************************
 //* Create USS env
-//* Java classes created in subdirectory/package test
 //*************************************************************
 //*
 //MKUSS  EXEC PGM=BPXBATCH,COND=(4,LT)
@@ -37,8 +40,6 @@ rm -rf $WORK_DIR;
 mkdir $WORK_DIR;
 cd $WORK_DIR;
 mkdir src;
-mkdir src/test;
-mkdir src/test/generated;
 mkdir javaiop;
 mkdir class;
 echo USS env created
@@ -50,36 +51,83 @@ WORK_DIR=&WORKDIR.
 /*
 //*
 //*************************************************************
-//* Create the COBOL source file
-//* for Java/COBOL mapping, see
-//* https://www.ibm.com/docs/en/cobol-zos/6.4?topic=
-//* ci-mapping-between-cobol-java-data-types-non-oo-coboljava-
-//* interoperability#rldirmap__typemap
+//* Create the Java source file
 //*************************************************************
 //*
-//MKCOB EXEC PGM=IKJEFT01,COND=(4,LT)
-//USS        DD PATH='&WORKDIR./src/COBPROG.cbl',
+//MKJAVA EXEC PGM=IKJEFT01,COND=(4,LT)
+//USS        DD PATH='&WORKDIR./src/HelloWorld.java',
 //             PATHOPTS=(OWRONLY,OCREAT),
 //             PATHMODE=(SIRWXU,SIRGRP,SIXGRP,SIROTH,SIXOTH)
 //SYSTSPRT DD SYSOUT=*
 //SYSTSIN  DD *
-OCOPY INDD(CBLSRC) OUTDD(USS) TEXT CONVERT(YES) PATHOPTS(USE)
+OCOPY INDD(JAVASRC) OUTDD(USS) TEXT CONVERT(YES) PATHOPTS(USE)
 /*
-//CBLSRC   DD *
-       CBL PGMNAME(LONGMIXED)
+//JAVASRC        DD *
+package test;
+
+public class HelloWorld {
+
+  public static String sayHelloTo(String name) {
+    String message = "Hello "+name+" and welcome to Java!";
+    System.out.println("Java says: "+message);
+    return "All good!";
+  }
+}
+/*
+//*
+//*************************************************************
+//* Build Java file
+//*************************************************************
+//*
+//BLDJAVA EXEC PGM=BPXBATSL,COND=(4,LT)
+//STDPARM DD *,SYMBOLS=EXECSYS
+PGM &JAVAHOME/bin/javac
+ -d &WORKDIR./class
+ &WORKDIR./src/HelloWorld.java
+/*
+//STDOUT  DD SYSOUT=*
+//STDERR  DD SYSOUT=*
+//STDENV  DD *,SYMBOLS=EXECSYS
+JAVA_HOME=&JAVAHOME
+/*
+//*
+//*************************************************************
+//* compile COBOL program (see C2J#HELO.lst)
+//*  and generate Java IOP
+//*************************************************************
+//*
+//BLDCOB    EXEC PGM=IGYCRCTL,COND=(4,LT),REGION=0M,
+//            PARM=('PGMNAME(LONGMIXED)',
+//         'JAVAIOP(OUTPATH(''&WORKDIR./javaiop''),JAVA64)')
+//STEPLIB  DD DISP=SHR,DSN=&COBPRFX..SIGYCOMP
+//SYSPRINT DD SYSOUT=*
+//SYSMDECK DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT1   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT2   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT3   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT4   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT5   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT6   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT7   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT8   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT9   DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT10  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT11  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT12  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT13  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT14  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSUT15  DD UNIT=SYSALLDA,SPACE=(CYL,(1,1))
+//SYSXMLSD DD DUMMY
+//COBOL.SYSLIN DD DISP=SHR,
+//        DSN=&OBJLIB.(C2JHELO)
+//COBOL.SYSIN DD *
       *
       *
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. 'COBPROG'.
+       PROGRAM-ID. 'C2JHELO'.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 ARGS.
-          05 ARG1 PIC X(200).
-          05 ARG2 PIC S9(9) COMP-5.
-       >>JAVA-SHAREABLE ON
-       01 ARG3 PIC X(200).
-       >>JAVA-SHAREABLE OFF
-
+       01 USER-NAME     PIC X(10) VALUE "Olivier".
        01 JAVA-MESSAGE  PIC X(50) VALUE SPACE.
 
        PROCEDURE DIVISION.
@@ -93,99 +141,19 @@ OCOPY INDD(CBLSRC) OUTDD(USS) TEXT CONVERT(YES) PATHOPTS(USE)
               GOBACK
            END-CALL
 
-           MOVE ALL 'X' TO ARG1
-           MOVE 123 TO ARG2
-           MOVE ALL 'Value3'TO ARG3.
-
-           CALL 'Java.test.JavaProg.doSomething' USING ARG1, ARG2
+           CALL 'Java.test.HelloWorld.sayHelloTo' USING USER-NAME
                 RETURNING JAVA-MESSAGE
            ON EXCEPTION
               DISPLAY "Java Exception occurred in HelloWorld"
               GOBACK
            END-CALL
            DISPLAY "Java returned:" JAVA-MESSAGE
-           DISPLAY "Arg3 is now " ARG3
            DISPLAY 'COBOL ended'
            GOBACK.
 /*
 //*
 //*************************************************************
-//* Create methods file containing the Java methods called
-//*  by COBOL
-//* This file is used by cjbuild in step CJBLD
-//*************************************************************
-//*
-//MKMTHD  EXEC PGM=BPXBATCH,COND=(4,LT)
-//STDPARM  DD *,SYMBOLS=EXECSYS
-SH echo WORK_DIR=$WORK_DIR;
-cd $WORK_DIR;
-
-echo COBPROG > methods;
-echo Java.test.JavaProg.doSomething >> methods;
-echo Java.com.ibm.jzos.ZUtil.redirectStandardStreams >> methods;
-
-/*
-//STDOUT   DD SYSOUT=*
-//STDERR   DD SYSOUT=*
-//STDENV   DD *,SYMBOLS=JCLONLY
-WORK_DIR=&WORKDIR.
-//*
-//*************************************************************
-//* Create the Java source file
-//*************************************************************
-//*
-//MKJAVA EXEC PGM=IKJEFT01,COND=(4,LT)
-//USS        DD PATH='&WORKDIR./src/test/JavaProg.java',
-//             PATHOPTS=(OWRONLY,OCREAT),
-//             PATHMODE=(SIRWXU,SIRGRP,SIXGRP,SIROTH,SIXOTH)
-//SYSTSPRT DD SYSOUT=*
-//SYSTSIN  DD *
-OCOPY INDD(JAVASRC) OUTDD(USS) TEXT CONVERT(YES) PATHOPTS(USE)
-/*
-//JAVASRC        DD *
-package test;
-
-public class JavaProg {
-
-  public static String doSomething(String arg1,int arg2) {
-    System.out.println("arg1="+arg1);
-    System.out.println("arg2="+arg2);
-    String arg3 = test.generated.strg.COBPROG.ARG3.get();
-    System.out.println("arg3="+arg3);
-    StringBuilder buf3 = new StringBuilder(arg3);
-    buf3.setCharAt(0,'Z');
-    buf3.setCharAt(199,'Z');
-    arg3=buf3.toString();
-    test.generated.strg.COBPROG.ARG3.put(arg3);
-    return "All good!";
-  }
-}
-/*
-//*
-//*************************************************************
-//* compile COBOL program (see COBPROG.lst)
-//*  and generate Java IOP
-//*************************************************************
-//*
-//BLDCOB  EXEC PGM=BPXBATCH,COND=(4,LT)
-//STDPARM  DD *,SYMBOLS=EXECSYS
-SH echo WORK_DIR=$WORK_DIR;
-export PATH=$PATH:$COBPATH;
-echo $PATH;
-cd $WORK_DIR;
-cob2 -c ./src/COBPROG.cbl \
- "-qjavaiop(OUTPATH('$WORK_DIR/javaiop'),JAVA64)";
-/*
-//STDOUT   DD SYSOUT=*
-//STDERR   DD SYSOUT=*
-//STDENV   DD *,SYMBOLS=JCLONLY
-WORK_DIR=&WORKDIR.
-COBPATH=/u/sandbox/usr/cobol/V6R4M0/bin
-STEPLIB=IGY.V6R4M0.SIGYCOMP
-/*
-//*
-//*************************************************************
-//* call CJBuild using MIX_31_64 to
+//* call CJBuild to
 //*    - generate COBOL IOP (IGYCJEST and IGYCJIMC)
 //*    - compile Java and COBOL IOP programs
 //*    - generate a DLL import file (libc2ja.x)
@@ -197,43 +165,26 @@ STEPLIB=IGY.V6R4M0.SIGYCOMP
 SH echo WORK_DIR=$WORK_DIR;
 export PATH=$PATH:$COBPATH:$JAVA_HOME/bin;
 echo $PATH;
-cd $WORK_DIR;
-cjbuild -v  -p test.generated
+cd $WORK_DIR/javaiop;
+cjbuild -v -p com.ibm.zdevops
   -m MIX_31_64
   -c $WORK_DIR/javaiop
   -d "//'$LOADLIB'"
-  -s $WORK_DIR/src/test/generated -j $WORK_DIR/class methods c2ja;
+  -s $WORK_DIR/src -j $WORK_DIR/class c2jb1;
 /*
 //STDOUT   DD SYSOUT=*
 //STDERR   DD SYSOUT=*
 //STDENV   DD *,SYMBOLS=JCLONLY
 WORK_DIR=&WORKDIR.
 LOADLIB=&LOADLIB.
-COBPATH=/u/sandbox/usr/cobol/V6R4M0/bin
-STEPLIB=IGY.V6R4M0.SIGYCOMP
-JAVA_HOME=&JAVAHOME
-/*
-//*
-//*************************************************************
-//* Build Java file
-//*************************************************************
-//*
-//BLDJAVA EXEC PGM=BPXBATSL,COND=(4,LT)
-//STDPARM DD *,SYMBOLS=EXECSYS
-PGM &JAVAHOME/bin/javac
- -cp &WORKDIR./class
- -d &WORKDIR./class
- &WORKDIR./src/test/JavaProg.java
-/*
-//STDOUT  DD SYSOUT=*
-//STDERR  DD SYSOUT=*
-//STDENV  DD *,SYMBOLS=EXECSYS
+COBPATH=&COBPATH./bin
+STEPLIB=&COBPRFX..SIGYCOMP
 JAVA_HOME=&JAVAHOME
 /*
 //*
 //*************************************************************
 //* Link them all
-//* - COBPROG.o
+//* - C2J#HELO.o
 //* - Java and COBOL IOP programs in LIBC2JA
 //*************************************************************
 //*
@@ -242,25 +193,26 @@ JAVA_HOME=&JAVAHOME
 SH echo WORK_DIR=$WORK_DIR;
 export PATH=$PATH:$COBPATH:$JAVA_HOME/bin;
 echo $PATH;
-cd $WORK_DIR;
-cob2 ./COBPROG.o -o "//'$LOADLIB(COBPROG)'"
- ./libc2ja.x;
+cd $WORK_DIR/javaiop;
+cob2 -v -bLIST,MAP,XREF "//'$OBJLIB(C2JHELO)'"
+ -o "//'$LOADLIB(C2JHELO)'" ./libc2jb1.x;
 
 /*
 //STDOUT   DD SYSOUT=*
 //STDERR   DD SYSOUT=*
 //STDENV   DD *,SYMBOLS=JCLONLY
 LOADLIB=&LOADLIB.
+OBJLIB=&OBJLIB.
 WORK_DIR=&WORKDIR.
-COBPATH=/u/sandbox/usr/cobol/V6R4M0/bin
-STEPLIB=IGY.V6R4M0.SIGYCOMP
+COBPATH=&COBPATH./bin
+STEPLIB=&COBPRFX..SIGYCOMP
 /*
 //*
 //*************************************************************
 //* Run it
 //*************************************************************
 //*
-//GO EXEC PGM=COBPROG,COND=(4,LT)
+//GO EXEC PGM=C2JHELO,COND=(4,LT)
 //STDENV DD *,SYMBOLS=JCLONLY
 _CEE_ENVFILE_COMMENT=#
 _CEE_ENVFILE_CONTINUATION=\
